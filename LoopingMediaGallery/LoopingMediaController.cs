@@ -2,25 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace LoopingMediaGallery
 {
-    class LoopingMediaController : IDisposable
+	class LoopingMediaController : IDisposable
     {
-        // Properties
-        // - Path
-        // - Duration
-        // - Idle Image Path (default to black slide)
-
-        // Methods
-        // - Start
-        // - Stop
-        // - Reset
-        // - Subscribe
-        // - Unsubscribe
         private bool _running = false;
         public bool Running
         {
@@ -29,7 +16,7 @@ namespace LoopingMediaGallery
             set { _running = value; }
         }
 
-        private int _duration = 10; 
+        private int _duration; 
         public int Duration
         {
             get
@@ -39,7 +26,7 @@ namespace LoopingMediaGallery
             internal set
             {
                 _duration = value;
-                if (Running)
+                if (Running && _mediaSwitchTimer != null)
                 {
                     _mediaSwitchTimer.Dispose();
                     InitializeTimer();
@@ -95,6 +82,7 @@ namespace LoopingMediaGallery
 
         internal void Reset()
         {
+			_views.ForEach(x => x.Clear());
             MediaIndex = 0;
             Next();
         }
@@ -123,6 +111,7 @@ namespace LoopingMediaGallery
 
         internal void Stop()
         {
+			_views.ForEach(x => x.Clear());
             Running = false;
             if(_mediaSwitchTimer != null)
                 _mediaSwitchTimer.Dispose();
@@ -136,7 +125,7 @@ namespace LoopingMediaGallery
 				_mediaSwitchTimer = null;
 			}
             // throw new NotImplementedException();
-            if (FileList == null)
+            if (FileList == null || FileList.Count == 0)
                 return;
             MediaIndex++;
 
@@ -169,10 +158,10 @@ namespace LoopingMediaGallery
 				}
 
                // _views.ForEach(x => x.OnVideoFinished += VideoFinished);
-               _views.ForEach(x => {
-				   if(x != firstPlayer)
-					x.ShowVideo(source, true);
-                   });
+     //          _views.ForEach(x => {
+				 //  if(x != firstPlayer)
+					//x.ShowVideo(source, true);
+     //              });
             }
 
             return;

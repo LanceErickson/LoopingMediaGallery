@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Input;
 using System.ComponentModel;
 
 namespace LoopingMediaGallery
 {
-    public class MainWindowViewModel : IDisposable, INotifyPropertyChanged
+	public class MainWindowViewModel : IDisposable, INotifyPropertyChanged
     {
 		private List<GalleryView> _galleries = new List<GalleryView>();		
 
@@ -27,7 +25,7 @@ namespace LoopingMediaGallery
 
 				SendPropertyChanged("FolderPath");
 
-				if (_loopingMediaController.Running)
+				if (_loopingMediaController != null && _loopingMediaController.Running)
 				{
 					_loopingMediaController.Stop();
 					ScanFolderPath(this);
@@ -78,7 +76,9 @@ namespace LoopingMediaGallery
             }
             set
             {
-                _loopingMediaController.Duration = value;
+				if(_loopingMediaController != null)
+					_loopingMediaController.Duration = value;
+				SendPropertyChanged("Duration");
             }
         }
 
@@ -86,11 +86,15 @@ namespace LoopingMediaGallery
         {
             get
             {
-                return _loopingMediaController.IdleImage;
+				if (_loopingMediaController != null)
+					return _loopingMediaController.IdleImage;
+				else
+					return null;
             }
             set
             {
-                _loopingMediaController.IdleImage = value;
+				if (_loopingMediaController != null)
+					_loopingMediaController.IdleImage = value;
             }
         }
 
@@ -98,17 +102,64 @@ namespace LoopingMediaGallery
         {
             get
             {
-                return _loopingMediaController.FileList;
+				if (_loopingMediaController != null)
+					return _loopingMediaController.FileList;
+				else
+					return null;
             }
             set
             {
-                _loopingMediaController.FileList = value;
+				if (_loopingMediaController != null)
+					_loopingMediaController.FileList = value;
             }
         }
 
-        public int RefreshRate { get; set; }
+		private int _refreshRate;
+        public int RefreshRate {
+			get
+			{
+				return _refreshRate;
+			}
+			set
+			{
+				_refreshRate = value;
+				SendPropertyChanged("RefreshRate");
+				InitializeRefreshTimer();
+			}
+		}
 
-        public ICommand StartStopCommand
+		private void LoadSettings()
+		{
+			FolderPath = (string)Properties.Settings.Default["FolderPath"] ?? string.Empty;
+			Duration = (int?)Properties.Settings.Default["Duration"] ?? 10;
+			RefreshRate = (int?)Properties.Settings.Default["RefreshRate"] ?? 1;
+        }
+
+		public ICommand SaveCommand
+		{
+			get;
+			internal set;
+		}
+
+		public void CreateSaveCommand()
+		{
+			SaveCommand = new RelayCommand(SaveExecute, CanExecuteSaveCommand);
+		}
+
+		private bool CanExecuteSaveCommand(object obj)
+		{
+			return true;
+		}
+
+		private void SaveExecute(object obj)
+		{
+			Properties.Settings.Default["FolderPath"] = FolderPath;
+			Properties.Settings.Default["RefreshRate"] = RefreshRate;
+			Properties.Settings.Default["Duration"] = Duration;
+			Properties.Settings.Default.Save();
+		}
+
+		public ICommand StartStopCommand
         {
             get;
             internal set;
@@ -220,27 +271,31 @@ namespace LoopingMediaGallery
         {
             CreateCommands();
             _loopingMediaController = new LoopingMediaController();
-            Duration = 5;
+			LoadSettings();
 
-            RefreshRate = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
-            FolderPath = "C:\\Users\\Lance\\Desktop\\SlideshowTest";
+			ScanFolderPath(this);
 
-            // Initialize folder monitoring timer
-            _fileRefreshTimer = new System.Threading.Timer(ScanFolderPath, new System.Threading.AutoResetEvent(false), RefreshRate, RefreshRate);
-
-            ScanFolderPath(this);
-
-            _loopingMediaController.Duration = this.Duration;
             _loopingMediaController.IdleImage = this.IdleImage;
             _loopingMediaController.FileList = this.FileList;
         }
 
-        private void CreateCommands()
+		private void InitializeRefreshTimer()
+		{
+			if (_fileRefreshTimer != null)
+			{
+				_fileRefreshTimer.Dispose();
+				_fileRefreshTimer = null;
+			}
+			_fileRefreshTimer = new System.Threading.Timer(ScanFolderPath, new System.Threading.AutoResetEvent(false), (int)TimeSpan.FromMinutes(RefreshRate).TotalMilliseconds, (int)TimeSpan.FromMinutes(RefreshRate).TotalMilliseconds);
+		}
+
+		private void CreateCommands()
         {
             CreateStartStopCommand();
             CreateResetCommand();
             CreateNextCommand();
             CreatePreviousCommand();
+			CreateSaveCommand();
         }
 
         public void Next(object sender, EventArgs e)
@@ -266,8 +321,8 @@ namespace LoopingMediaGallery
             {
                 var ext = Path.GetExtension(file);
 
-                if (FileList != null && !(ext == "jpg" || ext == "mp4" || ext == "png" || ext == "wmv"))
-                    FileList.Remove(file);
+                if (fileList != null && !(ext.ToLower() == ".jpg" || ext.ToLower() == ".mp4" || ext.ToLower() == ".png" || ext.ToLower() == ".wmv"))
+                    fileList.Remove(file);
             }
 
             FileList = fileList;

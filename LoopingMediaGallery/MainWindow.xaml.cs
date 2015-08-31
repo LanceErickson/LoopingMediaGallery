@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
+
 namespace LoopingMediaGallery
 {
     /// <summary>
@@ -22,11 +23,13 @@ namespace LoopingMediaGallery
     /// </summary>
     public partial class MainWindow : Window
     {
+
+		GalleryView galleryView;
         public MainWindow()
         {
             InitializeComponent();
 
-			var galleryView = new GalleryView();
+			galleryView = new GalleryView();
 			galleryView.Show();
 
 			((MainWindowViewModel)DataContext).AddGallery(galleryView);
@@ -49,27 +52,30 @@ namespace LoopingMediaGallery
                 ((Button)sender).Content = "Start";
         }
 
-		private void btnOpen_Click(object sender, RoutedEventArgs e)
+		private void btnSettings_Click(object sender, RoutedEventArgs e)
 		{
-			var dlg = new CommonOpenFileDialog();
-			dlg.Title = "Select a path to monitor";
-			dlg.IsFolderPicker = true;
+			var settingsView = new SettingsPageView(((MainWindowViewModel)DataContext));
 
-			dlg.AddToMostRecentlyUsedList = false;
-			dlg.AllowNonFileSystemItems = false;
-			dlg.EnsureFileExists = true;
-			dlg.EnsurePathExists = true;
-			dlg.EnsureReadOnly = false;
-			dlg.EnsureValidNames = true;
-			dlg.Multiselect = false;
-			dlg.ShowPlacesList = true;
+			settingsView.ShowDialog();
+		}
 
-			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
-			{
-				var folder = dlg.FileName;
+		private void btnPresent_Click(object sender, RoutedEventArgs e)
+		{
+			System.Windows.Forms.Screen[] screens = System.Windows.Forms.Screen.AllScreens;
 
-				((MainWindowViewModel)DataContext).FolderPath = folder;
-            }
+			System.Windows.Forms.Screen screen;
+			if (screens.Count() > 1)
+				screen = screens[1];
+			else
+				screen = screens[0];
+						
+				System.Drawing.Rectangle r2 = screen.WorkingArea;
+				galleryView.Top = r2.Top;
+				galleryView.Left = r2.Left;
+				galleryView.Show();
+
+				galleryView.Present();
+			
 		}
 	}
 }
