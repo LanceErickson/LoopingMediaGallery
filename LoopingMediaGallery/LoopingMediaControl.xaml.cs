@@ -16,21 +16,25 @@ using System.Windows.Shapes;
 
 namespace LoopingMediaGallery
 {
+	enum MediaType { Video, Image };
+
     /// <summary>
     /// Interaction logic for LoopingMediaControl.xaml
     /// </summary>
     public partial class LoopingMediaControl : UserControl, IDisposable
     {
-        public List<Uri> Source { get; set; }
-        public int ImageDuration { get; set; }
         public delegate void VideoFinished(object sender, EventArgs e);
         public VideoFinished OnVideoFinished;
-        private bool _isVideoPlaying = false;
-		public bool IsVideoPlaying { get { return _isVideoPlaying; } }
-        private MediaElement _activeMediaElement;
-        private Image _activeImage;
 
-        public LoopingMediaControl()
+		private bool _isVideoPlaying = false;
+		public bool IsVideoPlaying { get { return _isVideoPlaying; } }
+
+		private UIElement _activeElement;
+		private DoubleAnimation _fadeIn = new DoubleAnimation(0d, 1d, TimeSpan.FromSeconds(0.7d));
+		private DoubleAnimation _fadeOut = new DoubleAnimation(1d, 0d, TimeSpan.FromSeconds(0.7d));
+
+
+		public LoopingMediaControl()
         {
             InitializeComponent();
 
@@ -46,73 +50,69 @@ namespace LoopingMediaGallery
         private void VideoHasFinished(object sender, RoutedEventArgs e)
         {
             _isVideoPlaying = false;
-            _activeMediaElement.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, 0d, TimeSpan.FromSeconds(1d)), HandoffBehavior.SnapshotAndReplace);
+            _activeElement.BeginAnimation(UIElement.OpacityProperty, _fadeOut, HandoffBehavior.Compose);
 			if (OnVideoFinished != null)
 				OnVideoFinished.Invoke(this, new EventArgs());
         }
 
         public void ShowImage(string source)
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (_activeMediaElement != null)
-                    _activeMediaElement.Stop();
-
-                Image _inactiveImage;
-                if (_activeImage == null || _activeImage == image2)
-                {
-                    _activeImage = image1;
-                    _inactiveImage = image2;
-				}
-                else
-                {
-                    _activeImage = image2;
-                    _inactiveImage = image1;
-				}
-                _activeImage.Source = new BitmapImage(new Uri(source));
-
-				_activeImage.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0d, 1d, TimeSpan.FromSeconds(1d)), HandoffBehavior.Compose);
-				_inactiveImage.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, 0d, TimeSpan.FromSeconds(1d)), HandoffBehavior.Compose);
-            }));
+		{ 
+            Dispatcher.BeginInvoke(new Action(() => ShowMedia(source, MediaType.Image)));
         }
 
         public void ShowVideo(string source, bool preview = false)
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                if(_activeMediaElement != null)
-                    _activeMediaElement.Stop();
-
-                if(_activeImage != null && _activeImage.Opacity > 0)
-                    _activeImage.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, 0d, TimeSpan.FromSeconds(1d)));
-
-                MediaElement _inactiveMediaElement;
-                if (_activeMediaElement == null || _activeMediaElement == mediaElement2)
-                {
-                    _activeMediaElement = mediaElement1;
-                    _inactiveMediaElement = mediaElement2;
-                }
-                else
-                {
-                    _activeMediaElement = mediaElement2;
-                    _inactiveMediaElement = mediaElement1;
-                }
-
-                _activeMediaElement.Source = new Uri(source);
-
-                _activeMediaElement.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0d, 1d, TimeSpan.FromSeconds(1d)), HandoffBehavior.SnapshotAndReplace);
-
-				if (!preview)
-					_activeMediaElement.Play();     
-
-                _isVideoPlaying = true;
-            }));
+		{ 
+			Dispatcher.BeginInvoke(new Action(() => ShowMedia(source, MediaType.Video)));
         }
+
+		private void ShowMedia(string source, MediaType type)
+		{
+			if (_activeElement is MediaElement && _isVideoPlaying)
+			{
+				OnVideoFinished = null;
+				((MediaElement)_activeElement).Stop();
+				VideoHasFinished(this, new RoutedEventArgs());
+			}
+
+			// New logic for displaying media
+			if (type == MediaType.Image)
+			{
+				var oldElement = _activeElement;
+				_activeElement = oldElement == image1 ? image2 : image1;
+
+				((Image)_activeElement).Source = new BitmapImage(new Uri(source));
+
+				_activeElement.BeginAnimation(UIElement.OpacityProperty, _fadeIn, HandoffBehavior.Compose);
+				if (oldElement != null)
+					oldElement.BeginAnimation(UIElement.OpacityProperty, _fadeOut, HandoffBehavior.Compose);
+			}
+			else
+			{
+				var oldElement = _activeElement;
+				_activeElement = oldElement == mediaElement1 ? mediaElement2 : mediaElement1;
+
+				((MediaElement)_activeElement).Source = new Uri(source);
+
+				((MediaElement)_activeElement).Play();
+
+				if (oldElement is Image)
+					oldElement.BeginAnimation(OpacityProperty, _fadeOut, HandoffBehavior.Compose);
+				_activeElement.BeginAnimation(OpacityProperty, _fadeIn, HandoffBehavior.Compose);
+
+				_isVideoPlaying = true;
+			}
+		}
+
+		public void Clear()
+		{
+			if(_activeElement != null)
+				_activeElement.BeginAnimation(OpacityProperty, _fadeOut, HandoffBehavior.Compose);
+		}
 
         public void Dispose()
         {
-            if (_isVideoPlaying && _activeMediaElement != null)
-                _activeMediaElement.Stop();
+            if (_isVideoPlaying && _activeElement != null && _activeElement is MediaElement)
+                ((MediaElement)_activeElement).Stop();
         }
     }
 }

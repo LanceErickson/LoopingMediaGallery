@@ -50,5 +50,11 @@ namespace LoopingMediaGallery
         {
             loopingMediaControl.Dispose();
         }
-    }
+
+		internal void Present()
+		{
+			this.WindowStyle = WindowStyle.None;
+			this.WindowState = WindowState.Maximized;
+		}
+	}
 }
