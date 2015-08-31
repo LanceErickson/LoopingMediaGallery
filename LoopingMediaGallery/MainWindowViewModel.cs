@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Input;
 using System.ComponentModel;
 
 namespace LoopingMediaGallery
 {
-    public class MainWindowViewModel : IDisposable, INotifyPropertyChanged
+	public class MainWindowViewModel : IDisposable, INotifyPropertyChanged
     {
 		private List<GalleryView> _galleries = new List<GalleryView>();		
 

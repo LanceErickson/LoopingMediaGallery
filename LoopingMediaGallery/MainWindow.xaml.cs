@@ -63,17 +63,19 @@ namespace LoopingMediaGallery
 		{
 			System.Windows.Forms.Screen[] screens = System.Windows.Forms.Screen.AllScreens;
 
+			System.Windows.Forms.Screen screen;
 			if (screens.Count() > 1)
-			{
-				var secondScreen = screens[1];
-
-				System.Drawing.Rectangle r2 = secondScreen.WorkingArea;
+				screen = screens[1];
+			else
+				screen = screens[0];
+						
+				System.Drawing.Rectangle r2 = screen.WorkingArea;
 				galleryView.Top = r2.Top;
 				galleryView.Left = r2.Left;
 				galleryView.Show();
 
 				galleryView.Present();
-			}
+			
 		}
 	}
 }

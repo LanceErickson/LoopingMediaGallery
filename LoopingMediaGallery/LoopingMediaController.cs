@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace LoopingMediaGallery
 {
-    class LoopingMediaController : IDisposable
+	class LoopingMediaController : IDisposable
     {
         private bool _running = false;
         public bool Running

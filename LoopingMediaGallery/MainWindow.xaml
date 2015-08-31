@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LoopingMediaGallery"
         mc:Ignorable="d"
         Title="Looping Media Gallery" Height="208.807" Width="413.637"
-        DataContext="{StaticResource ViewModel}">
+        DataContext="{StaticResource ViewModel}" ResizeMode="NoResize">
     <Grid>
 
         <Button x:Name="btnReset" Content="Reset" Command="{Binding ResetCommand}" Margin="199,10,0,0" VerticalAlignment="Top" Width="58" Height="34" HorizontalAlignment="Left" />

@@ -7,7 +7,7 @@
         xmlns:ext="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:qc="http://QuickConverter.CodePlex.com/"
         mc:Ignorable="d"
-        Title="SettingsPageView" Height="147.443" Width="393.75" ResizeMode="NoResize">
+        Title="Settings" Height="147.443" Width="393.75" ResizeMode="NoResize">
     <Grid>
 
         <Label x:Name="lblPath" Content="Path:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="36" Margin="10,11,0,0"/>
