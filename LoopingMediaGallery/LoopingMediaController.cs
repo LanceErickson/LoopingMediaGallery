@@ -77,6 +77,11 @@ namespace LoopingMediaGallery
 
         private void InitializeTimer()
         {
+			if(_mediaSwitchTimer != null)
+			{
+				_mediaSwitchTimer.Dispose();
+				_mediaSwitchTimer = null;
+			}
             _mediaSwitchTimer = new System.Threading.Timer(GotoNext, new System.Threading.AutoResetEvent(false), (int)TimeSpan.FromSeconds(Duration).TotalMilliseconds, (int)TimeSpan.FromSeconds(Duration).TotalMilliseconds);
         }
 
@@ -115,7 +120,6 @@ namespace LoopingMediaGallery
         internal void Start()
         {
             Running = true;
-            InitializeTimer();
             Next();
         }
 
@@ -134,8 +138,13 @@ namespace LoopingMediaGallery
 				_mediaSwitchTimer = null;
 			}
 
-            if (FileList == null || FileList.Count == 0)
-                return;
+			if (FileList == null || FileList.Count == 0)
+			{
+				if(Running)
+					InitializeTimer();
+				return;
+			}
+
             MediaIndex++;
 
             string source = FileList[MediaIndex-1];
@@ -157,8 +166,9 @@ namespace LoopingMediaGallery
 					Next();
 					return;
 				}
-				
-				InitializeTimer();
+
+				if(Running)
+					InitializeTimer();
 			}
 
             if(videoFormatExtensions.Contains(Path.GetExtension(source), StringComparer.OrdinalIgnoreCase))
@@ -168,6 +178,7 @@ namespace LoopingMediaGallery
                     Next();
                     return;
                 }
+
 				try
 				{
 					var firstPlayer = _views.FirstOrDefault();
@@ -198,7 +209,6 @@ namespace LoopingMediaGallery
 			((LoopingMediaControl)sender).OnVideoFinished -= VideoFinished;
             if (Running)
             {
-                InitializeTimer();
                 Next();
             }
         }

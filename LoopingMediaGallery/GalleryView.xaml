@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LoopingMediaGallery"
         mc:Ignorable="d"
-        Title="" Height="300" Width="300" Background="Black" WindowStyle="None" AllowsTransparency="True" MouseDown="Window_MouseDown">
+        Title="" Height="300" Width="300" Background="Black" MouseDown="Window_MouseDown" WindowStyle="None">
     <Grid>
         <local:LoopingMediaControl x:Name="loopingMediaControl"/>
     </Grid>

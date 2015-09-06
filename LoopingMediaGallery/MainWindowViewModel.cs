@@ -38,7 +38,6 @@ namespace LoopingMediaGallery
 					_loopingMediaController.Stop();
 					ScanFolderPath(this);
 					_loopingMediaController.Reset();
-					_loopingMediaController.Start();
 				}
 				else
 				{
