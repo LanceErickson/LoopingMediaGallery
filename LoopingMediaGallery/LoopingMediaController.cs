@@ -95,12 +95,22 @@ namespace LoopingMediaGallery
         internal void Subscribe(LoopingMediaControl loopingMediaControl)
         {
             _views.Add(loopingMediaControl);
+			if(_views.Count == 1)
+				loopingMediaControl.OnMediaFailure += MediaFailed;
         }
 
         internal void Unsubscribe(LoopingMediaControl loopingMediaControl)
         {
             _views.Remove(loopingMediaControl);
+			if (_views.Count == 0)
+				loopingMediaControl.OnMediaFailure -= MediaFailed;
         }
+
+		private void MediaFailed(object sender, EventArgs e)
+		{
+			((LoopingMediaControl)sender).OnVideoFinished = null;
+			Next();
+		}
 
         internal void Start()
         {
@@ -111,7 +121,6 @@ namespace LoopingMediaGallery
 
         internal void Stop()
         {
-			_views.ForEach(x => x.Clear());
             Running = false;
             if(_mediaSwitchTimer != null)
                 _mediaSwitchTimer.Dispose();
@@ -124,7 +133,7 @@ namespace LoopingMediaGallery
 				_mediaSwitchTimer.Dispose();
 				_mediaSwitchTimer = null;
 			}
-            // throw new NotImplementedException();
+
             if (FileList == null || FileList.Count == 0)
                 return;
             MediaIndex++;
@@ -138,8 +147,17 @@ namespace LoopingMediaGallery
                     Next();
                     return;
                 }
-                _views.ForEach(x => x.ShowImage(source));
 
+				try
+				{
+					_views.ForEach(x => x.ShowImage(source));
+				}
+				catch
+				{
+					Next();
+					return;
+				}
+				
 				InitializeTimer();
 			}
 
@@ -150,11 +168,19 @@ namespace LoopingMediaGallery
                     Next();
                     return;
                 }
-				var firstPlayer = _views.FirstOrDefault();
-				if(firstPlayer != null)
+				try
 				{
-					firstPlayer.OnVideoFinished += VideoFinished;
-					firstPlayer.ShowVideo(source);
+					var firstPlayer = _views.FirstOrDefault();
+					if (firstPlayer != null)
+					{
+						firstPlayer.OnVideoFinished += VideoFinished;
+						firstPlayer.ShowVideo(source);
+					}
+				}
+				catch
+				{
+					Next();
+					return;
 				}
 
                // _views.ForEach(x => x.OnVideoFinished += VideoFinished);
@@ -183,10 +209,11 @@ namespace LoopingMediaGallery
             Next();
         }
 
-        internal void Blank()
-        {
-
-        }
+		internal void Blank()
+		{
+			_views.ForEach(x => x.Clear());
+			Stop();
+		}
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

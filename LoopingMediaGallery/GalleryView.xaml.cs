@@ -24,15 +24,10 @@ namespace LoopingMediaGallery
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
         {
             if (this.WindowState == WindowState.Maximized)
-            {
-                this.WindowStyle = WindowStyle.SingleBorderWindow;
                 this.WindowState = WindowState.Normal;
-            }
             else
-            {
-                this.WindowStyle = WindowStyle.None;
                 this.WindowState = WindowState.Maximized;
-            }
+            
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -44,6 +39,12 @@ namespace LoopingMediaGallery
 		{
 			this.WindowStyle = WindowStyle.None;
 			this.WindowState = WindowState.Maximized;
+		}
+
+		private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			if (e.ChangedButton == MouseButton.Left)
+				this.DragMove();
 		}
 	}
 }

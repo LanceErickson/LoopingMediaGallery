@@ -16,6 +16,9 @@ namespace LoopingMediaGallery
         public delegate void VideoFinished(object sender, EventArgs e);
         public VideoFinished OnVideoFinished;
 
+		public delegate void MediaFailure(object sender, EventArgs e);
+		public MediaFailure OnMediaFailure;
+
 		private bool _isVideoPlaying = false;
 		public bool IsVideoPlaying { get { return _isVideoPlaying; } }
 
@@ -70,7 +73,15 @@ namespace LoopingMediaGallery
 				var oldElement = _activeElement;
 				_activeElement = oldElement == image1 ? image2 : image1;
 
-				((Image)_activeElement).Source = new BitmapImage(new Uri(source));
+				try
+				{
+					((Image)_activeElement).Source = new BitmapImage(new Uri(source));
+				}
+				catch
+				{
+					if (OnMediaFailure != null)
+						OnMediaFailure.Invoke(this, new EventArgs());
+				}
 
 				_activeElement.BeginAnimation(UIElement.OpacityProperty, _fadeIn, HandoffBehavior.Compose);
 				if (oldElement != null)
@@ -81,9 +92,16 @@ namespace LoopingMediaGallery
 				var oldElement = _activeElement;
 				_activeElement = oldElement == mediaElement1 ? mediaElement2 : mediaElement1;
 
-				((MediaElement)_activeElement).Source = new Uri(source);
-
-				((MediaElement)_activeElement).Play();
+				try
+				{
+					((MediaElement)_activeElement).Source = new Uri(source);
+					((MediaElement)_activeElement).Play();
+				}
+				catch
+				{
+					if (OnMediaFailure != null)
+						OnMediaFailure.Invoke(this, new EventArgs());
+				}
 
 				if (oldElement is Image)
 					oldElement.BeginAnimation(OpacityProperty, _fadeOut, HandoffBehavior.Compose);

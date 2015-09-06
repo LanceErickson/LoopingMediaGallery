@@ -53,5 +53,10 @@ namespace LoopingMediaGallery
 			}
 			this.Focus();
 		}
+
+		private void btnSave_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
+		}
 	}
 }

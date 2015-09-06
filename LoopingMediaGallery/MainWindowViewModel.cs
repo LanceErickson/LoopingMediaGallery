@@ -15,6 +15,14 @@ namespace LoopingMediaGallery
 
         private LoopingMediaController _loopingMediaController;
 
+		public event PropertyChangedEventHandler PropertyChanged;
+		public void SendPropertyChanged(string propertyName)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		#region Properties
 		private string _folderPath;
         public string FolderPath
 		{
@@ -39,15 +47,7 @@ namespace LoopingMediaGallery
 			}
 		}
 
-        private LoopingMediaControl _previewPane;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		public void SendPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
-
+		private LoopingMediaControl _previewPane;
 		public LoopingMediaControl PreviewPane
         {
             get
@@ -127,14 +127,9 @@ namespace LoopingMediaGallery
 				InitializeRefreshTimer();
 			}
 		}
-
-		private void LoadSettings()
-		{
-			FolderPath = (string)Properties.Settings.Default["FolderPath"] ?? string.Empty;
-			Duration = (int?)Properties.Settings.Default["Duration"] ?? 10;
-			RefreshRate = (int?)Properties.Settings.Default["RefreshRate"] ?? 1;
-        }
-
+#endregion
+		
+		#region Commands 
 		public ICommand SaveCommand
 		{
 			get;
@@ -266,8 +261,9 @@ namespace LoopingMediaGallery
         {
             _loopingMediaController.Blank();
         }
+		#endregion
 
-        public MainWindowViewModel()
+		public MainWindowViewModel()
         {
             CreateCommands();
             _loopingMediaController = new LoopingMediaController();
@@ -278,6 +274,13 @@ namespace LoopingMediaGallery
             _loopingMediaController.IdleImage = this.IdleImage;
             _loopingMediaController.FileList = this.FileList;
         }
+
+		private void LoadSettings()
+		{
+			FolderPath = (string)Properties.Settings.Default["FolderPath"] ?? string.Empty;
+			Duration = (int?)Properties.Settings.Default["Duration"] ?? 10;
+			RefreshRate = (int?)Properties.Settings.Default["RefreshRate"] ?? 1;
+		}
 
 		private void InitializeRefreshTimer()
 		{
@@ -296,6 +299,7 @@ namespace LoopingMediaGallery
             CreateNextCommand();
             CreatePreviousCommand();
 			CreateSaveCommand();
+			CreateBlankCommand();
         }
 
         public void Next(object sender, EventArgs e)

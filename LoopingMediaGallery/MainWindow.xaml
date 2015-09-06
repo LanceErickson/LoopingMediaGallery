@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LoopingMediaGallery"
         mc:Ignorable="d"
         Title="Looping Media Gallery" Height="208.807" Width="413.637"
-        DataContext="{StaticResource ViewModel}" ResizeMode="NoResize">
+        DataContext="{StaticResource ViewModel}" ResizeMode="CanMinimize">
     <Grid>
 
         <Button x:Name="btnReset" Content="Reset" Command="{Binding ResetCommand}" Margin="199,10,0,0" VerticalAlignment="Top" Width="58" Height="34" HorizontalAlignment="Left" />
@@ -14,7 +14,7 @@
         <Button x:Name="btnNext" Content="Next" Command="{Binding NextCommand}" Margin="136,10,0,0" VerticalAlignment="Top" Width="58" Height="34" HorizontalAlignment="Left"  />
         <Button x:Name="btnPrevious" Content="Previous" Command="{Binding PreviousCommand}" Margin="73,10,0,0" VerticalAlignment="Top" Height="34" HorizontalAlignment="Left" Width="58"  />
 
-        <Button x:Name="btnBlank" Content="Blank" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top" Width="121" Height="34"/>
+        <Button x:Name="btnBlank" Content="Blank" Command="{Binding BlankCommand}" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top" Width="121" Height="34"/>
         <Button x:Name="btnPresent" Content="Present" HorizontalAlignment="Left" Margin="136,134,0,0" VerticalAlignment="Top" Width="121" Height="34" Click="btnPresent_Click"/>
 
         <local:LoopingMediaControl x:Name="loopPreviewPane" Margin="262,71,0,0" Height="107" VerticalAlignment="Top" HorizontalAlignment="Left" Width="144"/>
