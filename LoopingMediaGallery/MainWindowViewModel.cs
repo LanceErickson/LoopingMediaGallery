@@ -4,6 +4,10 @@ using System.Linq;
 using System.IO;
 using System.Windows.Input;
 using System.ComponentModel;
+using System.Windows.Threading;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Drawing;
 
 namespace LoopingMediaGallery
 {
@@ -46,26 +50,26 @@ namespace LoopingMediaGallery
 			}
 		}
 
-		private LoopingMediaControl _previewPane;
-		public LoopingMediaControl PreviewPane
-        {
-            get
-            {
-                return _previewPane;
-            }
-            set
-            {
-                if(_previewPane != null)
-                {
-					_loopingMediaController.Unsubscribe(_previewPane);
-                }
+		//private LoopingMediaControl _previewPane;
+		//public LoopingMediaControl PreviewPane
+  //      {
+  //          get
+  //          {
+  //              return _previewPane;
+  //          }
+  //          set
+  //          {
+  //              if(_previewPane != null)
+  //              {
+		//			_loopingMediaController.Unsubscribe(_previewPane);
+  //              }
 
-                _previewPane = value;
+  //              _previewPane = value;
 
-                if(_previewPane != null)
-                    _loopingMediaController.Subscribe(_previewPane);
-            }
-        }
+  //              if(_previewPane != null)
+  //                  _loopingMediaController.Subscribe(_previewPane);
+  //          }
+  //      }
 
         public int Duration
         {
@@ -260,6 +264,28 @@ namespace LoopingMediaGallery
         {
             _loopingMediaController.Blank();
         }
+
+		public ICommand MuteCommand
+		{
+			get;
+			internal set;
+		}
+
+		public void CreateMuteCommand()
+		{
+			MuteCommand = new RelayCommand(MuteExecute, CanExecuteMuteCommand);
+		}
+
+		private bool CanExecuteMuteCommand(object obj)
+		{
+			return true;
+		}
+
+		private void MuteExecute(object obj)
+		{
+			_loopingMediaController.Mute();
+		}
+
 		#endregion
 
 		public MainWindowViewModel()
@@ -272,7 +298,35 @@ namespace LoopingMediaGallery
 
             _loopingMediaController.IdleImage = this.IdleImage;
             _loopingMediaController.FileList = this.FileList;
+
+			_previewTimer = new DispatcherTimer();
+			_previewTimer.Tick += _previewTimer_Tick;
+			_previewTimer.Interval = TimeSpan.FromSeconds(1);
+			_previewTimer.Start();
         }
+
+		private void _previewTimer_Tick(object sender, EventArgs e)
+		{
+			if (PreviewImage != null)
+				PreviewImage.Clear();
+			PreviewImage = null;
+			PreviewImage = _loopingMediaController.GetPreviewBitmap();
+		}
+
+		private RenderTargetBitmap _previewImage;
+		public RenderTargetBitmap PreviewImage
+		{
+			get { return _previewImage; }
+			set
+			{
+				if (_previewImage == value)
+					return;
+				_previewImage = value;
+				SendPropertyChanged("PreviewImage");
+			}
+		}
+
+		private DispatcherTimer _previewTimer;
 
 		private void LoadSettings()
 		{
@@ -299,6 +353,7 @@ namespace LoopingMediaGallery
             CreatePreviousCommand();
 			CreateSaveCommand();
 			CreateBlankCommand();
+			CreateMuteCommand();
         }
 
         public void Next(object sender, EventArgs e)

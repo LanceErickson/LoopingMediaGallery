@@ -29,12 +29,14 @@ namespace LoopingMediaGallery
         {
             InitializeComponent();
 
+			//this.loopPreviewPane.IsMuted = true;
+
 			galleryView = new GalleryView();
 			galleryView.Show();
 
 			((MainWindowViewModel)DataContext).AddGallery(galleryView);
 
-			((MainWindowViewModel)DataContext).PreviewPane = this.loopPreviewPane;
+			//((MainWindowViewModel)DataContext).PreviewPane = this.loopPreviewPane;
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -76,6 +78,14 @@ namespace LoopingMediaGallery
 
 				galleryView.Present();
 			
+		}
+
+		private void btnMute_Click(object sender, RoutedEventArgs e)
+		{
+			if ((string)((Button)sender).Content == "Mute")
+				((Button)sender).Content = "Unmute";
+			else
+				((Button)sender).Content = "Mute";
 		}
 	}
 }

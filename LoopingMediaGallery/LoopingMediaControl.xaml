@@ -8,8 +8,8 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Canvas Background="Black"/>
-        <MediaElement x:Name="mediaElement1"/>
-        <MediaElement x:Name="mediaElement2"/>
+        <MediaElement x:Name="mediaElement1" IsMuted="{Binding IsMuted, UpdateSourceTrigger=PropertyChanged}"/>
+        <MediaElement x:Name="mediaElement2" IsMuted="{Binding IsMuted, UpdateSourceTrigger=PropertyChanged}"/>
         <Image x:Name="image1"/>
         <Image x:Name="image2"/>
     </Grid>

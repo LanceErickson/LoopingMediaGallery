@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows.Media.Imaging;
 
 namespace LoopingMediaGallery
 {
@@ -181,12 +182,14 @@ namespace LoopingMediaGallery
 
 				try
 				{
-					var firstPlayer = _views.FirstOrDefault();
-					if (firstPlayer != null)
-					{
-						firstPlayer.OnVideoFinished += VideoFinished;
-						firstPlayer.ShowVideo(source);
-					}
+					//var firstPlayer = _views.FirstOrDefault();
+					//if (firstPlayer != null)
+					//{
+					//	firstPlayer.OnVideoFinished += VideoFinished;
+					//	firstPlayer.ShowVideo(source);
+					//}
+					_views.ForEach(x => x.OnVideoFinished += VideoFinished);
+					_views.ForEach(x => x.ShowVideo(source));
 				}
 				catch
 				{
@@ -245,14 +248,33 @@ namespace LoopingMediaGallery
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~LoopingMediaController() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
+		internal void Mute()
+		{
+			var view = _views.FirstOrDefault();
+			if(view != null)
+			{
+				view.IsMuted = !view.IsMuted;
+			}
+		}
 
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
+		public RenderTargetBitmap GetPreviewBitmap()
+		{
+			var view = _views.FirstOrDefault();
+			if (view != null)
+			{
+				return view.RenderPreviewBitmap();
+			}
+			return null;
+		}
+
+		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+		// ~LoopingMediaController() {
+		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+		//   Dispose(false);
+		// }
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(true);
