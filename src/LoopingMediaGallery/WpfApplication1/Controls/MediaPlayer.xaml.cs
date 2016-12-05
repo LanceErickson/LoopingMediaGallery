@@ -22,6 +22,31 @@ namespace LoopingMediaGallery.Controls
 		private UIElement _queuedElement;
 		public event EventHandler MediaEnded;
 
+
+		public bool Play
+		{
+			get { return (bool)GetValue(PlayProperty); }
+			set { SetValue(PlayProperty, value); }
+		}
+		public static DependencyProperty PlayProperty = DependencyProperty.Register("Play", typeof(bool), typeof(MediaPlayer), new PropertyMetadata(false, (s,o) => PlayChanged(s, o)));
+
+		private static void PlayChanged(DependencyObject s, DependencyPropertyChangedEventArgs o)
+			=> (s as MediaPlayer)?.TogglePlay();
+
+		private void TogglePlay()
+		{
+			if (Play)
+			{
+				(_currentElement as MediaElement)?.Play();
+				InitializeTimer();
+			}
+			else
+			{
+				(_currentElement as MediaElement)?.Stop();
+				DisposeTimer();
+			}
+		}
+
 		public bool Mute
 		{
 			get { return (bool)GetValue(MuteProperty); }
@@ -64,22 +89,36 @@ namespace LoopingMediaGallery.Controls
 
 		private void StartPlaying()
 		{
+			DisposeTimer();
+
+			(_currentElement as MediaElement)?.Stop();
+
+			_queuedElement.Visibility = Visibility.Visible;
+			if (Play)
+			{
+				(_queuedElement as MediaElement)?.Play();
+				InitializeTimer();
+			}
+
+			if (_currentElement != null)
+				_currentElement.Visibility = Visibility.Collapsed;
+
+			_currentElement = _queuedElement;
+			_queuedElement = null;
+		}
+
+		private void DisposeTimer()
+		{
 			if (_durationTimer != null)
 			{
 				_durationTimer.Dispose();
 				_durationTimer = null;
 			}
-			(_currentElement as MediaElement)?.Stop();
-			
-			_queuedElement.Visibility = Visibility.Visible;
-			(_queuedElement as MediaElement)?.Play();
-			_durationTimer = new Timer((s) => Dispatcher.BeginInvoke(new Action(() => MediaEnded?.Invoke(this, new EventArgs()))), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
-			
-			if(_currentElement != null)
-				_currentElement.Visibility = Visibility.Collapsed;
+		}
 
-			_currentElement = _queuedElement;
-			_queuedElement = null;
+		private void InitializeTimer()
+		{
+			_durationTimer = new Timer((s) => Dispatcher.BeginInvoke(new Action(() => MediaEnded?.Invoke(this, new EventArgs()))), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
 		}
 
 		private void SetupVideo(IMediaObject media)

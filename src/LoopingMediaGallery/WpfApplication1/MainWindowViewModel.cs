@@ -16,6 +16,19 @@ namespace LoopingMediaGallery
 
 		public IMediaObject CurrentMedia => _mediaServer?.CurrentMedia;
 
+		private bool _play = false;
+		public bool Play
+		{
+			get { return _play; }
+			set
+			{
+				if (_play == value)
+					return;
+				_play = value;
+				SendPropertyChanged(nameof(Play));
+			}
+		}
+
 		public MainWindowViewModel(ISettingsProvider settingsProvider, IServeMedia mediaServer, IMediaProvider mediaProvider)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
@@ -33,10 +46,39 @@ namespace LoopingMediaGallery
 			_settingsProvider.FileRefreshRate = 1;
 		}
 
-		public void MediaHasEnded()
+		public void MediaHasEnded() => NextHandler();
+
+		public void ResetHandler()
+		{
+			_mediaServer.Reset();
+			SendPropertyChanged(nameof(CurrentMedia));
+		}
+
+		public void NextHandler()
 		{
 			_mediaServer.NextMedia();
 			SendPropertyChanged(nameof(CurrentMedia));
+		}
+
+		public void PreviousHandler()
+		{
+			_mediaServer.PreviousMedia();
+			SendPropertyChanged(nameof(CurrentMedia));
+		}
+
+		public void BlankHandler()
+		{
+
+		}
+
+		public void PresentHandler()
+		{
+
+		}
+
+		public void SettingsHandler()
+		{
+
 		}
 	}
 }

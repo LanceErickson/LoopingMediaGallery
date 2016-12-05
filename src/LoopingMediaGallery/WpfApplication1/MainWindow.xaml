@@ -10,6 +10,31 @@
         xmlns:qc="http://QuickConverter.CodePlex.com/"
         Height="350" Width="525">
     <Grid>
-        <controls:MediaPlayer Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" MediaEnded="{qc:QuickEvent '$dataContext.MediaHasEnded()'}"/>
+        <Grid.Resources>
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Width" Value="64" />
+                <Setter Property="Height" Value="32" />
+                <Setter Property="Cursor" Value="Hand" />
+            </Style>
+            <Style TargetType="{x:Type ToggleButton}">
+                <Setter Property="Width" Value="64" />
+                <Setter Property="Height" Value="32" />
+                <Setter Property="Cursor" Value="Hand" />
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <controls:MediaPlayer Grid.Row="0" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, UpdateSourceTrigger=PropertyChanged}" MediaEnded="{qc:QuickEvent '$dataContext.MediaHasEnded()'}"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <ToggleButton Content="{Binding Play, Converter={qc:QuickConverter '$P == false ? \'Play\' : \'Stop\''}}" IsChecked="{Binding Play, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="Reset" Click="{qc:QuickEvent '$dataContext.ResetHandler()'}" />
+            <Button Content="Next" Click="{qc:QuickEvent '$dataContext.NextHandler()'}" />
+            <Button Content="Previous" Click="{qc:QuickEvent '$dataContext.PreviousHandler()'}" />
+            <Button Content="Blank" Click="{qc:QuickEvent '$dataContext.BlankHandler()'}" />
+            <Button Content="Present" Click="{qc:QuickEvent '$dataContext.PresentHandler()'}" />
+            <Button Content="Settings" Click="{qc:QuickEvent '$dataContext.SettingsHandler()'}" />
+        </StackPanel>
     </Grid>
 </Window>
