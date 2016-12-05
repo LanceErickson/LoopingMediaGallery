@@ -1,16 +1,16 @@
-﻿<UserControl x:Class="LoopingMediaGallery.LoopingMediaControl"
+﻿<UserControl x:Class="LoopingMediaGallery.Controls.MediaPlayer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:LoopingMediaGallery"
+             xmlns:local="clr-namespace:LoopingMediaGallery.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Canvas Background="Black"/>
-        <MediaElement x:Name="mediaElement1" IsMuted="{Binding IsMuted, UpdateSourceTrigger=PropertyChanged}"/>
-        <MediaElement x:Name="mediaElement2" IsMuted="{Binding IsMuted, UpdateSourceTrigger=PropertyChanged}"/>
-        <Image x:Name="image1"/>
-        <Image x:Name="image2"/>
+        <MediaElement x:Name="videoOne"/>
+        <MediaElement x:Name="videoTwo"/>
+        <Image x:Name="imageOne"/>
+        <Image x:Name="imageTwo"/>
     </Grid>
 </UserControl>

@@ -1,0 +1,101 @@
+﻿using LoopingMediaGallery.Interfaces;
+using System;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+
+namespace LoopingMediaGallery.Controls
+{
+	/// <summary>
+	/// Interaction logic for MediaPlayer.xaml
+	/// </summary>
+	public partial class MediaPlayer : UserControl
+	{
+		public MediaPlayer()
+		{
+			InitializeComponent();
+		}
+
+		private Timer _durationTimer;
+		private UIElement _currentElement;
+		private UIElement _queuedElement;
+		public event EventHandler MediaEnded;
+
+		public bool Mute
+		{
+			get { return (bool)GetValue(MuteProperty); }
+			set { SetValue(MuteProperty, value); }
+		}
+		public static DependencyProperty MuteProperty =
+			DependencyProperty.Register("Mute", typeof(bool), typeof(MediaPlayer), new PropertyMetadata(true, (s, o) => MuteChanged(s, o)));
+
+		private static void MuteChanged(DependencyObject s, DependencyPropertyChangedEventArgs o)
+			=> (s as MediaPlayer)?.MuteAudio();
+
+		private void MuteAudio()
+		{
+			videoOne.IsMuted = Mute;
+			videoTwo.IsMuted = Mute;
+		}
+
+		public IMediaObject Source
+		{
+			get { return (IMediaObject)GetValue(SourceProperty); }
+			set { SetValue(SourceProperty, value); }
+		}
+		public static DependencyProperty SourceProperty = 
+			DependencyProperty.Register("Source", typeof(IMediaObject), typeof(MediaPlayer), new PropertyMetadata(null, (s, o) => SourceChanged(s, o)));
+
+		private static void SourceChanged(DependencyObject s, DependencyPropertyChangedEventArgs o)
+			=>	(s as MediaPlayer)?.Update();
+		
+		private void Update()
+		{
+			if (Source == null) return;
+
+			if (Source.Type == MediaType.Image)
+				SetupImage(Source);
+			else
+				SetupVideo(Source);
+
+			StartPlaying();
+		}
+
+		private void StartPlaying()
+		{
+			_durationTimer.Dispose();
+			_durationTimer = null;
+			(_currentElement as MediaElement)?.Stop();
+
+			_queuedElement.Visibility = Visibility.Visible;
+			(_queuedElement as MediaElement)?.Play();
+			_durationTimer = new Timer((s) => MediaEnded?.Invoke(null, null), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
+			
+			_currentElement.Visibility = Visibility.Collapsed;
+
+			_currentElement = _queuedElement;
+			_queuedElement = null;
+		}
+
+		private void SetupVideo(IMediaObject media)
+		{
+			if (_currentElement == videoOne)
+				_queuedElement = videoTwo;
+			else
+				_queuedElement = videoOne;
+
+			(_queuedElement as MediaElement).Source = Source.Source;
+		}
+			
+		private void SetupImage(IMediaObject media)
+		{
+			if (_currentElement == imageOne)
+				_queuedElement = imageTwo;
+			else
+				_queuedElement = imageOne;
+
+			(_queuedElement as Image).Source = new BitmapImage(Source.Source); ;
+		}
+	}
+}

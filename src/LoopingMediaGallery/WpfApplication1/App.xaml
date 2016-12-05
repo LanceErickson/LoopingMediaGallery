@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:LoopingMediaGallery"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <local:MainWindowViewModel x:Key="ViewModel" />
+         
     </Application.Resources>
 </Application>
