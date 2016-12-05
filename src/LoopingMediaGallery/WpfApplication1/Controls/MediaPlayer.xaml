@@ -8,8 +8,8 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Canvas Background="Black"/>
-        <MediaElement x:Name="videoOne"/>
-        <MediaElement x:Name="videoTwo"/>
+        <MediaElement x:Name="videoOne" LoadedBehavior="Manual"/>
+        <MediaElement x:Name="videoTwo" LoadedBehavior="Manual"/>
         <Image x:Name="imageOne"/>
         <Image x:Name="imageTwo"/>
     </Grid>
