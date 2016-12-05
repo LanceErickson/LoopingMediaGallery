@@ -70,7 +70,7 @@ namespace LoopingMediaGallery.Controls
 				_durationTimer = null;
 			}
 			(_currentElement as MediaElement)?.Stop();
-
+			
 			_queuedElement.Visibility = Visibility.Visible;
 			(_queuedElement as MediaElement)?.Play();
 			_durationTimer = new Timer((s) => Dispatcher.BeginInvoke(new Action(() => MediaEnded?.Invoke(this, new EventArgs()))), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
@@ -99,7 +99,13 @@ namespace LoopingMediaGallery.Controls
 			else
 				_queuedElement = imageOne;
 
-			(_queuedElement as Image).Source = new BitmapImage(Source.Source); ;
+			var newSource = new BitmapImage();
+			newSource.BeginInit();
+			newSource.UriSource = media.Source;
+			newSource.CacheOption = BitmapCacheOption.OnLoad;
+			newSource.EndInit();
+			newSource.Freeze();
+			(_queuedElement as Image).Source = newSource;
 		}
 	}
 }
