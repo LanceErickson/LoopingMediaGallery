@@ -64,15 +64,19 @@ namespace LoopingMediaGallery.Controls
 
 		private void StartPlaying()
 		{
-			_durationTimer.Dispose();
-			_durationTimer = null;
+			if (_durationTimer != null)
+			{
+				_durationTimer.Dispose();
+				_durationTimer = null;
+			}
 			(_currentElement as MediaElement)?.Stop();
 
 			_queuedElement.Visibility = Visibility.Visible;
 			(_queuedElement as MediaElement)?.Play();
-			_durationTimer = new Timer((s) => MediaEnded?.Invoke(null, null), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
+			_durationTimer = new Timer((s) => Dispatcher.BeginInvoke(new Action(() => MediaEnded?.Invoke(this, new EventArgs()))), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
 			
-			_currentElement.Visibility = Visibility.Collapsed;
+			if(_currentElement != null)
+				_currentElement.Visibility = Visibility.Collapsed;
 
 			_currentElement = _queuedElement;
 			_queuedElement = null;

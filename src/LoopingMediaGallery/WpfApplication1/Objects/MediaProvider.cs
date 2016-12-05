@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace LoopingMediaGallery.Objects
 {
@@ -19,6 +16,9 @@ namespace LoopingMediaGallery.Objects
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
 
 			_settingsProvider = settingsProvider;
+
+			MediaObjectCollection = new List<IMediaObject>();
+
 			_fileRefreshTimer = new Timer(ScanFolderPath, new System.Threading.AutoResetEvent(false), (int)TimeSpan.FromMinutes(_settingsProvider.FileRefreshRate).TotalMilliseconds, (int)TimeSpan.FromMinutes(_settingsProvider.FileRefreshRate).TotalMilliseconds);
 		}
 
@@ -38,14 +38,14 @@ namespace LoopingMediaGallery.Objects
 				if (_settingsProvider.ImageFormats.Contains(ext.ToLower()))
 					mediaCollection.Add(new LocalImageObject(_settingsProvider, file));
 
-				if (_settingsProvider.VideoFomats.Contains(ext.ToLower()))
+				if (_settingsProvider.VideoFormats.Contains(ext.ToLower()))
 					mediaCollection.Add(new LocalVideoObject(file));
 			}
 
 			MediaObjectCollection = mediaCollection;			
 		}
 
-		public IEnumerable<IMediaObject> MediaObjectCollection { get; internal set; }
+		public IList<IMediaObject> MediaObjectCollection { get; internal set; }
 
 		public void ForceUpdate() => ScanFolderPath(null);
 	}

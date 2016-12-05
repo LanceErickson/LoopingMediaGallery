@@ -10,6 +10,6 @@
         xmlns:qc="http://QuickConverter.CodePlex.com/"
         Height="350" Width="525">
     <Grid>
-        <controls:MediaPlayer Source="{Binding CurrentMedia}" MediaEnded="{qc:QuickEvent '$dataContext.MediaHasEnded()'}"/>
+        <controls:MediaPlayer Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" MediaEnded="{qc:QuickEvent '$dataContext.MediaHasEnded()'}"/>
     </Grid>
 </Window>

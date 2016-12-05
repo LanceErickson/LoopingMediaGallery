@@ -10,8 +10,8 @@
 
 		void PreviousMedia();
 
-		void ServeSpecific(int index);
+		void Reset();
 
-		void ClearCurrent();
+		void ServeSpecific(int index);
 	}
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LoopingMediaGallery.Interfaces;
+using LoopingMediaGallery.Objects;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +16,15 @@ namespace LoopingMediaGallery
 	/// </summary>
 	public partial class App : Application
 	{
+		protected override void OnStartup(StartupEventArgs e)
+		{
+			IUnityContainer container = new UnityContainer();
+			container.RegisterType<IServeMedia, MediaServer>();
+			container.RegisterType<IMediaProvider, MediaProvider>(new ContainerControlledLifetimeManager());
+			container.RegisterType<ISettingsProvider, Objects.SettingsProvider>();
+
+			MainWindow mainWindow = container.Resolve<MainWindow>();
+			mainWindow.Show();
+		}
 	}
 }

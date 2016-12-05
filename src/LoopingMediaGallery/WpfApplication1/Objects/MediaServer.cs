@@ -1,49 +1,53 @@
 ﻿using LoopingMediaGallery.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LoopingMediaGallery.Objects
 {
 	public class MediaServer : IServeMedia
 	{
+		private IMediaProvider _mediaProvider;
+		private uint _currentIndex = 0;
+
+		public MediaServer(IMediaProvider mediaProvider)
+		{
+			if (mediaProvider == null) throw new ArgumentNullException(nameof(mediaProvider));
+
+			_mediaProvider = mediaProvider;
+		}
 
 		public IMediaObject CurrentMedia
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
+			=> _mediaProvider.MediaObjectCollection.Count() >= _currentIndex + 1
+						? _mediaProvider.MediaObjectCollection[(int)_currentIndex]
+						: null;
 
-		public int MaxIndex
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		public void ClearCurrent()
-		{
-			throw new NotImplementedException();
-		}
+		public int MaxIndex => _mediaProvider.MediaObjectCollection?.Count() - 1 ?? 0;
 
 		public void NextMedia()
 		{
-			throw new NotImplementedException();
+			if (_currentIndex + 1 > MaxIndex)
+				_currentIndex = 0;
+			else
+				_currentIndex++;
 		}
 
 		public void PreviousMedia()
 		{
-			throw new NotImplementedException();
+			if (_currentIndex - 1 > MaxIndex || _currentIndex - 1 < 0)
+				_currentIndex = 0;
+			else
+				_currentIndex--;
 		}
 
 		public void ServeSpecific(int index)
 		{
-			throw new NotImplementedException();
+			if (index > 0 && index <= MaxIndex)
+				_currentIndex = (uint)index;
+		}
+
+		public void Reset()
+		{
+			_currentIndex = 0;
 		}
 	}
 }

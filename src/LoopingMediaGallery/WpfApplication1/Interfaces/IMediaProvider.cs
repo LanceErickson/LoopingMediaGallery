@@ -4,7 +4,7 @@ namespace LoopingMediaGallery.Interfaces
 {
 	public interface IMediaProvider
 	{
-		IEnumerable<IMediaObject> MediaObjectCollection { get; }
+		IList<IMediaObject> MediaObjectCollection { get; }
 
 		void ForceUpdate();
 	}

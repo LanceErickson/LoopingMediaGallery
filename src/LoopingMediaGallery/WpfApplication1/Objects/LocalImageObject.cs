@@ -14,6 +14,8 @@ namespace LoopingMediaGallery.Objects
 			if (string.IsNullOrEmpty(source)) throw new ArgumentNullException(nameof(source));
 			if (!File.Exists(source)) throw new ArgumentException(nameof(source));
 
+			_settingsProvider = settingsProvider;
+
 			Source = new Uri(source);
  		}
 

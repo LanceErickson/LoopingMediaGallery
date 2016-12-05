@@ -1,10 +1,6 @@
 ﻿using LoopingMediaGallery.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LoopingMediaGallery
 {
@@ -29,6 +25,12 @@ namespace LoopingMediaGallery
 			_settingsProvider = settingsProvider;
 			_mediaServer = mediaServer;
 			_mediaProvider = mediaProvider;
+
+			_mediaProvider.ForceUpdate();
+
+			_settingsProvider.FileFolderPath = "C:\\Users\\Lance\\Dropbox\\Apps\\Looping Media Gallery";
+			_settingsProvider.Duration = 10;
+			_settingsProvider.FileRefreshRate = 1;
 		}
 
 		public void MediaHasEnded()

@@ -7,10 +7,10 @@ namespace LoopingMediaGallery
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public MainWindow()
+		public MainWindow(MainWindowViewModel viewModel)
 		{
 			//TODO: DI CONTAINER
-			this.DataContext = new MainWindowViewModel(null, null, null);
+			this.DataContext = viewModel;
 
 			InitializeComponent();
 		}
