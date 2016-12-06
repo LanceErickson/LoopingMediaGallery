@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LoopingMediaGallery.Interfaces
 {
@@ -10,8 +7,9 @@ namespace LoopingMediaGallery.Interfaces
 	{
 		ISet<string> ImageFormats { get; }
 		ISet<string> VideoFormats {get; }
-		int Duration { get; set; }
-		int FileRefreshRate { get; set; }
-		string FileFolderPath { get; set; }
+		int Duration { get; }
+		int FileRefreshRate { get; }
+		string FileFolderPath { get; }
+		event EventHandler SettingsChanged;
 	}
 }

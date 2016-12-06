@@ -16,14 +16,17 @@ namespace LoopingMediaGallery
 	/// </summary>
 	public partial class App : Application
 	{
+		private IUnityContainer _container;
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			IUnityContainer container = new UnityContainer();
-			container.RegisterType<IServeMedia, MediaServer>();
-			container.RegisterType<IMediaProvider, MediaProvider>(new ContainerControlledLifetimeManager());
-			container.RegisterType<ISettingsProvider, Objects.SettingsProvider>();
+			_container = new UnityContainer();
+			_container.RegisterType<IServeMedia, MediaServer>();
+			_container.RegisterType<IMediaProvider, MediaProvider>(new ContainerControlledLifetimeManager());
+			_container.RegisterType<ISettingsProvider, Objects.SettingsProvider>();
+			_container.RegisterType<ISaveSettings, SettingsSaver>();
 
-			MainWindow mainWindow = container.Resolve<MainWindow>();
+			MainWindow mainWindow = _container.Resolve<MainWindow>();
 			mainWindow.Show();
 		}
 	}

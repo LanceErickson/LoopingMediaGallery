@@ -1,54 +1,25 @@
 ﻿using LoopingMediaGallery.Interfaces;
 using System.Collections.Generic;
+using System;
 
 namespace LoopingMediaGallery.Objects
 {
 	public class SettingsProvider : ISettingsProvider
 	{
+		public SettingsProvider()
+		{
+			Properties.Settings.Default.SettingChanging += (s, o) => SettingsChanged?.Invoke(s, o);
+		}
 		public ISet<string> ImageFormats => new HashSet<string> { ".jpg", ".png", ".bmp", ".jpeg", ".tiff" };
 
 		public ISet<string> VideoFormats => new HashSet<string> { ".mp4", ".wmv" };
 
-		public int Duration
-		{
-			get
-			{
-				return (int?)Properties.Settings.Default["Duration"] ?? 10;
-			}
+		public int Duration => (int?)Properties.Settings.Default["Duration"] ?? 10;
 
-			set
-			{
-				Properties.Settings.Default["Duration"] = value;
-				Properties.Settings.Default.Save();
-			}
-		}
+		public string FileFolderPath => (string)Properties.Settings.Default["FolderPath"] ?? string.Empty;
 
-		public string FileFolderPath
-		{
-			get
-			{
-				return (string)Properties.Settings.Default["FolderPath"] ?? string.Empty;
-			}
+		public int FileRefreshRate => (int?)Properties.Settings.Default["RefreshRate"] ?? 1;
 
-			set
-			{
-				Properties.Settings.Default["FolderPath"] = value;
-				Properties.Settings.Default.Save();
-			}
-		}
-
-		public int FileRefreshRate
-		{
-			get
-			{
-				return (int?)Properties.Settings.Default["RefreshRate"] ?? 1;
-			}
-
-			set
-			{
-				Properties.Settings.Default["RefreshRate"] = value;
-				Properties.Settings.Default.Save();
-			}
-		}
+		public event EventHandler SettingsChanged;
 	}
 }
