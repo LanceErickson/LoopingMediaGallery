@@ -26,7 +26,7 @@
             <RowDefinition Height="9*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <controls:MediaPlayer Grid.Row="0" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, UpdateSourceTrigger=PropertyChanged}" MediaEnded="{qc:QuickEvent '$dataContext.MediaHasEnded()'}"/>
+        <controls:MediaPlayer Grid.Row="0" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" MediaEnded="{qc:QuickEvent '$dataContext.MediaHasEnded()'}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <ToggleButton Content="{Binding Play, Converter={qc:QuickConverter '$P == false ? \'Play\' : \'Stop\''}}" IsChecked="{Binding Play, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Reset" Click="{qc:QuickEvent '$dataContext.ResetHandler()'}" />
@@ -35,6 +35,7 @@
             <Button Content="Blank" Click="{qc:QuickEvent '$dataContext.BlankHandler()'}" />
             <Button Content="Present" Click="{qc:QuickEvent '$dataContext.PresentHandler()'}" />
             <Button Content="Settings" Click="{qc:QuickEvent '$dataContext.SettingsHandler()'}" />
+            <ToggleButton Content="{Binding Mute, Converter={qc:QuickConverter '$P == false ? \'Mute\' : \'Unmute\''}}" IsChecked="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </Grid>
 </Window>

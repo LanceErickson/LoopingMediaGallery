@@ -15,13 +15,14 @@ namespace LoopingMediaGallery.Controls
 		public MediaPlayer()
 		{
 			InitializeComponent();
+
+			MuteAudio();
 		}
 
 		private Timer _durationTimer;
 		private UIElement _currentElement;
 		private UIElement _queuedElement;
 		public event EventHandler MediaEnded;
-
 
 		public bool Play
 		{
@@ -62,6 +63,29 @@ namespace LoopingMediaGallery.Controls
 		{
 			videoOne.IsMuted = Mute;
 			videoTwo.IsMuted = Mute;
+		}
+
+		public bool Blank
+		{
+			get { return (bool)GetValue(BlankProperty); }
+			set { SetValue(BlankProperty, value); }
+		}
+		public static DependencyProperty BlankProperty = DependencyProperty.Register("Blank", typeof(bool), typeof(MediaPlayer), new PropertyMetadata(false, (s, o) => BlankChanged(s, o)));
+
+		private static void BlankChanged(DependencyObject s, DependencyPropertyChangedEventArgs o)
+			=> (s as MediaPlayer)?.ToggleBlank();
+
+		private void ToggleBlank()
+		{
+			if (Blank)
+			{
+				Play = false;
+				_currentElement.Visibility = Visibility.Collapsed;
+			}
+			else
+			{
+				_currentElement.Visibility = Visibility.Visible;
+			}
 		}
 
 		public IMediaObject Source

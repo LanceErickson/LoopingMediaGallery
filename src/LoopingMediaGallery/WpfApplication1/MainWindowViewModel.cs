@@ -29,6 +29,32 @@ namespace LoopingMediaGallery
 			}
 		}
 
+		private bool _mute = true;
+		public bool Mute
+		{
+			get { return _mute; }
+			set
+			{
+				if (_mute == value)
+					return;
+				_mute = value;
+				SendPropertyChanged(nameof(Mute));
+			}
+		}
+
+		private bool _blank = false;
+		public bool Blank
+		{
+			get { return _blank; }
+			set
+			{
+				if (_blank == value)
+					return;
+				_blank = value;
+				SendPropertyChanged(nameof(Blank));
+			}
+		}
+
 		public MainWindowViewModel(ISettingsProvider settingsProvider, IServeMedia mediaServer, IMediaProvider mediaProvider)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
@@ -66,10 +92,7 @@ namespace LoopingMediaGallery
 			SendPropertyChanged(nameof(CurrentMedia));
 		}
 
-		public void BlankHandler()
-		{
-
-		}
+		public void BlankHandler() => Blank = !Blank;
 
 		public void PresentHandler()
 		{
