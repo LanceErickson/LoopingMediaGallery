@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace LoopingMediaGallery
 {
@@ -19,6 +20,13 @@ namespace LoopingMediaGallery
 			presentationView.Show();
 
 			InitializeComponent();
+		}
+
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			base.OnClosing(e);
+
+			((MainWindowViewModel)DataContext).ClosePresentationView();
 		}
 	}
 }

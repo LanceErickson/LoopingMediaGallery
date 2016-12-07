@@ -141,6 +141,12 @@ namespace LoopingMediaGallery
 			_presentationView = presentationView;
 		}
 
+		internal void ClosePresentationView()
+		{
+			if (_presentationView != null)
+				_presentationView.Close();
+		}
+
 		public void SettingsHandler()
 		{
 			var settingsWindow = new SettingsWindowView(new SettingsWindowViewModel(_settingsProvider, _settingsSaver));
