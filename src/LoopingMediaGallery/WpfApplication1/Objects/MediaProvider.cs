@@ -16,18 +16,29 @@ namespace LoopingMediaGallery.Objects
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
 
 			_settingsProvider = settingsProvider;
+			_settingsProvider.SettingsChanged += (s, o) =>
+			{
+				if ((o as System.Configuration.SettingChangingEventArgs).SettingName != nameof(_settingsProvider.RefreshRate)) return;
+				_fileRefreshTimer.Dispose();
+				InitializeTimer();
+			};
 
 			MediaObjectCollection = new List<IMediaObject>();
 
-			_fileRefreshTimer = new Timer(ScanFolderPath, new System.Threading.AutoResetEvent(false), (int)TimeSpan.FromMinutes(_settingsProvider.FileRefreshRate).TotalMilliseconds, (int)TimeSpan.FromMinutes(_settingsProvider.FileRefreshRate).TotalMilliseconds);
+			InitializeTimer();
+		}
+
+		private void InitializeTimer()
+		{
+			_fileRefreshTimer = new Timer(ScanFolderPath, new AutoResetEvent(false), (int)TimeSpan.FromMinutes(_settingsProvider.RefreshRate).TotalMilliseconds, (int)TimeSpan.FromMinutes(_settingsProvider.RefreshRate).TotalMilliseconds);
 		}
 
 		private void ScanFolderPath(object state)
 		{
-			if (string.IsNullOrEmpty(_settingsProvider.FileFolderPath) || string.IsNullOrWhiteSpace(_settingsProvider.FileFolderPath) || !Directory.Exists(_settingsProvider.FileFolderPath))
+			if (string.IsNullOrEmpty(_settingsProvider.FolderPath) || string.IsNullOrWhiteSpace(_settingsProvider.FolderPath) || !Directory.Exists(_settingsProvider.FolderPath))
 				return;
 
-			string[] files = Directory.GetFiles(_settingsProvider.FileFolderPath);
+			string[] files = Directory.GetFiles(_settingsProvider.FolderPath);
 
 			var mediaCollection = new List<IMediaObject>();
 

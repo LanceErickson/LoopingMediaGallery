@@ -56,6 +56,19 @@ namespace LoopingMediaGallery
 			}
 		}
 
+		private bool _useFade = false;
+		public bool UseFade
+		{
+			get { return _useFade; }
+			set
+			{
+				if (_useFade == value)
+					return;
+				_useFade = value;
+				SendPropertyChanged(nameof(UseFade));
+			}
+		}
+
 		public MainWindowViewModel(ISettingsProvider settingsProvider, IServeMedia mediaServer, IMediaProvider mediaProvider, ISaveSettings settingsSaver)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
@@ -68,7 +81,14 @@ namespace LoopingMediaGallery
 			_mediaProvider = mediaProvider;
 			_settingsSaver = settingsSaver;
 
+			_settingsProvider.SettingsChanged += (s, o) =>
+			{
+				if ((o as System.Configuration.SettingChangingEventArgs).SettingName != nameof(_settingsProvider.UseFade)) return;
+				UseFade = (bool)(o as System.Configuration.SettingChangingEventArgs).NewValue;
+			};
+			
 			_mediaProvider.ForceUpdate();
+			UseFade = _settingsProvider.UseFade;
 		}
 
 		public void MediaHasEnded() => NextHandler();

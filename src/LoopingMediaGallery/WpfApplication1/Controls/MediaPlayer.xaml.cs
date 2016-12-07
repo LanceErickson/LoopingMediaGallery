@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
 namespace LoopingMediaGallery.Controls
@@ -23,6 +24,10 @@ namespace LoopingMediaGallery.Controls
 		private UIElement _currentElement;
 		private UIElement _queuedElement;
 		public event EventHandler MediaEnded;
+		private DoubleAnimation _fadeIn = new DoubleAnimation(0d, 1d, TimeSpan.FromSeconds(0.7d));
+		private DoubleAnimation _fadeOut = new DoubleAnimation(1d, 0d, TimeSpan.FromSeconds(0.7d));
+		private DoubleAnimation _cutIn = new DoubleAnimation(0d, 1d, TimeSpan.FromSeconds(0.0d));
+		private DoubleAnimation _cutOut = new DoubleAnimation(1d, 0d, TimeSpan.FromSeconds(0.0d));
 
 		public bool Play
 		{
@@ -47,7 +52,14 @@ namespace LoopingMediaGallery.Controls
 				DisposeTimer();
 			}
 		}
-
+		
+		public bool UseFade
+		{
+			get { return (bool)GetValue(UseFadeProperty); }
+			set { SetValue(UseFadeProperty, value); }
+		}
+		public static DependencyProperty UseFadeProperty = DependencyProperty.Register("UseFade", typeof(bool), typeof(MediaPlayer), null);
+		
 		public bool Mute
 		{
 			get { return (bool)GetValue(MuteProperty); }
@@ -80,11 +92,11 @@ namespace LoopingMediaGallery.Controls
 			if (Blank)
 			{
 				Play = false;
-				_currentElement.Visibility = Visibility.Collapsed;
+				ToggleElementVisibility(_currentElement, false);
 			}
 			else
 			{
-				_currentElement.Visibility = Visibility.Visible;
+				ToggleElementVisibility(_currentElement, true);
 			}
 		}
 
@@ -116,8 +128,8 @@ namespace LoopingMediaGallery.Controls
 			DisposeTimer();
 
 			(_currentElement as MediaElement)?.Stop();
-
-			_queuedElement.Visibility = Visibility.Visible;
+			
+			SwitchElementsVisibility(_currentElement, _queuedElement);
 			if (Play)
 			{
 				(_queuedElement as MediaElement)?.Play();
@@ -125,7 +137,12 @@ namespace LoopingMediaGallery.Controls
 			}
 
 			if (_currentElement != null)
-				_currentElement.Visibility = Visibility.Collapsed;
+			{
+				if (_currentElement is Image)
+					(_currentElement as Image).Source = null;
+				else
+					(_currentElement as MediaElement).Source = null;
+			}
 
 			_currentElement = _queuedElement;
 			_queuedElement = null;
@@ -170,5 +187,14 @@ namespace LoopingMediaGallery.Controls
 			newSource.Freeze();
 			(_queuedElement as Image).Source = newSource;
 		}
+
+		private void SwitchElementsVisibility(UIElement currentElement, UIElement queuedElement)
+		{
+			currentElement?.BeginAnimation(UIElement.OpacityProperty, UseFade ? _fadeOut : _cutOut, HandoffBehavior.Compose);
+			queuedElement?.BeginAnimation(UIElement.OpacityProperty, UseFade ? _fadeIn : _cutIn, HandoffBehavior.Compose);
+		}
+
+		private void ToggleElementVisibility(UIElement element, bool visible)
+			=> element.BeginAnimation(UIElement.OpacityProperty, UseFade ? (visible ? _fadeIn : _fadeOut) : (visible ? _cutIn : _cutOut), HandoffBehavior.Compose);
 	}
 }

@@ -8,8 +8,9 @@ namespace LoopingMediaGallery.Interfaces
 		ISet<string> ImageFormats { get; }
 		ISet<string> VideoFormats {get; }
 		int Duration { get; }
-		int FileRefreshRate { get; }
-		string FileFolderPath { get; }
+		int RefreshRate { get; }
+		string FolderPath { get; }
+		bool UseFade { get; }
 		event EventHandler SettingsChanged;
 	}
 }

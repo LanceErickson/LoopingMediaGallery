@@ -27,6 +27,8 @@
         <ext:IntegerUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" Width="45" Height="25" HorizontalAlignment="Left"/>
         <Label Grid.Row="2" Grid.Column="0" Content="Refresh:" />
         <ext:IntegerUpDown Grid.Row="2" Grid.Column="1" Value="{Binding RefreshRate, UpdateSourceTrigger=PropertyChanged}" Width="45" Height="25" HorizontalAlignment="Left"/>
+        <Label Grid.Row="3" Grid.Column="0" Content="Use Fade:" />
+        <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding UseFade, UpdateSourceTrigger=PropertyChanged}" />
         <Button Grid.Row="3" Grid.Column="2" Content="Save" Click="{qc:QuickEvent '$dataContext.Save()'}" Width="45" Height="25" />
     </Grid>
 </Window>

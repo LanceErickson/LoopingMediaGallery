@@ -11,6 +11,7 @@ namespace LoopingMediaGallery.Interfaces
 		int Duration { set; }
 		int RefreshRate { set; }
 		string FolderPath { set; }
+		bool UseFade { set; }
 		void Save();
 	}
 }

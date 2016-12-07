@@ -15,6 +15,8 @@ namespace LoopingMediaGallery.Objects
 
 		public int RefreshRate { set { Properties.Settings.Default["RefreshRate"] = value; } }
 
+		public bool UseFade { set { Properties.Settings.Default["UseFade"] = value; } }
+
 		public void Save() => Properties.Settings.Default.Save();
 	}
 }

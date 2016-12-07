@@ -22,7 +22,7 @@ namespace LoopingMediaGallery
 
 		public int RefreshRate
 		{
-			get { return _settingsProvider.FileRefreshRate; }
+			get { return _settingsProvider.RefreshRate; }
 			set { _settingsSaver.RefreshRate = value; }
 		}
 
@@ -34,8 +34,14 @@ namespace LoopingMediaGallery
 
 		public string FolderPath
 		{
-			get { return _settingsProvider.FileFolderPath; }
+			get { return _settingsProvider.FolderPath; }
 			set { _settingsSaver.FolderPath = value; }
+		}
+
+		public bool UseFade
+		{
+			get { return _settingsProvider.UseFade; }
+			set { _settingsSaver.UseFade = value; }
 		}
 
 		public void Save()
