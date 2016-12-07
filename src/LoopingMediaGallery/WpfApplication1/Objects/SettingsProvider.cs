@@ -10,6 +10,7 @@ namespace LoopingMediaGallery.Objects
 		{
 			Properties.Settings.Default.SettingChanging += (s, o) => SettingsChanged?.Invoke(s, o);
 		}
+
 		public ISet<string> ImageFormats => new HashSet<string> { ".jpg", ".png", ".bmp", ".jpeg", ".tiff" };
 		
 		public ISet<string> VideoFormats => new HashSet<string> { ".mp4", ".wmv" };
@@ -21,6 +22,8 @@ namespace LoopingMediaGallery.Objects
 		public int RefreshRate => (int?)Properties.Settings.Default["RefreshRate"] ?? 1;
 
 		public bool UseFade => (bool?)Properties.Settings.Default["UseFade"] ?? true;
+
+		public bool ShowPreview => (bool?)Properties.Settings.Default["ShowPreview"] ?? true;
 
 		public event EventHandler SettingsChanged;
 	}

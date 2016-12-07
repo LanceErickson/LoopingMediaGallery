@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LoopingMediaGallery.Interfaces
+﻿namespace LoopingMediaGallery.Interfaces
 {
 	public interface ISaveSettings
 	{
@@ -12,6 +6,7 @@ namespace LoopingMediaGallery.Interfaces
 		int RefreshRate { set; }
 		string FolderPath { set; }
 		bool UseFade { set; }
+		bool ShowPreview { set; }
 		void Save();
 	}
 }

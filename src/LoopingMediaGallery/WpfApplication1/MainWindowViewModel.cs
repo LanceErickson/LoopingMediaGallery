@@ -70,6 +70,19 @@ namespace LoopingMediaGallery
 			}
 		}
 
+		private bool _showPreview = false;
+		public bool ShowPreview
+		{
+			get { return _showPreview; }
+			set
+			{
+				if (_showPreview == value)
+					return;
+				_showPreview = value;
+				SendPropertyChanged(nameof(ShowPreview));
+			}
+		}
+
 		private PresentationView _presentationView;
 
 		public MainWindowViewModel(ISettingsProvider settingsProvider, IServeMedia mediaServer, IMediaProvider mediaProvider, ISaveSettings settingsSaver)
@@ -86,15 +99,20 @@ namespace LoopingMediaGallery
 
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
-				if ((o as System.Configuration.SettingChangingEventArgs).SettingName != nameof(_settingsProvider.UseFade)) return;
-				UseFade = (bool)(o as System.Configuration.SettingChangingEventArgs).NewValue;
+				if ((o as System.Configuration.SettingChangingEventArgs).SettingName == nameof(_settingsProvider.UseFade))
+					UseFade = (bool)(o as System.Configuration.SettingChangingEventArgs).NewValue;
 			};
-			
+
 			_mediaProvider.ForceUpdate();
 			UseFade = _settingsProvider.UseFade;
+			ShowPreview = _settingsProvider.ShowPreview;
 		}
 
-		public void MediaHasEnded() => NextHandler();
+		public void MediaHasEnded()
+		{
+			ShowPreview = _settingsProvider.ShowPreview;
+			NextHandler();
+		}
 
 		public void ResetHandler()
 		{

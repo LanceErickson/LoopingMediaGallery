@@ -11,6 +11,7 @@ namespace LoopingMediaGallery.Interfaces
 		int RefreshRate { get; }
 		string FolderPath { get; }
 		bool UseFade { get; }
+		bool ShowPreview { get; }
 		event EventHandler SettingsChanged;
 	}
 }

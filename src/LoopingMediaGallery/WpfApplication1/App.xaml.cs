@@ -16,6 +16,14 @@ namespace LoopingMediaGallery
 	/// </summary>
 	public partial class App : Application
 	{
+		public App()
+		{
+			// Setup Quick Converter.
+			// Add the System namespace so we can use primitive types (i.e. int, etc.).
+			QuickConverter.EquationTokenizer.AddNamespace(typeof(object));
+			// Add the System.Windows namespace so we can use Visibility.Collapsed, etc.
+			QuickConverter.EquationTokenizer.AddNamespace(typeof(System.Windows.Visibility));
+		}
 		private IUnityContainer _container;
 
 		protected override void OnStartup(StartupEventArgs e)

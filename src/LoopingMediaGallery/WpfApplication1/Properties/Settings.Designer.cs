@@ -70,5 +70,17 @@ namespace LoopingMediaGallery.Properties {
                 this["UseFade"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowPreview {
+            get {
+                return ((bool)(this["ShowPreview"]));
+            }
+            set {
+                this["ShowPreview"] = value;
+            }
+        }
     }
 }

@@ -1,9 +1,4 @@
 ﻿using LoopingMediaGallery.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LoopingMediaGallery.Objects
 {
@@ -16,6 +11,8 @@ namespace LoopingMediaGallery.Objects
 		public int RefreshRate { set { Properties.Settings.Default["RefreshRate"] = value; } }
 
 		public bool UseFade { set { Properties.Settings.Default["UseFade"] = value; } }
+
+		public bool ShowPreview { set { Properties.Settings.Default["ShowPreview"] = value; } }
 
 		public void Save() => Properties.Settings.Default.Save();
 	}

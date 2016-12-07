@@ -44,6 +44,12 @@ namespace LoopingMediaGallery
 			set { _settingsSaver.UseFade = value; }
 		}
 
+		public bool ShowPreview
+		{
+			get { return _settingsProvider.ShowPreview; }
+			set { _settingsSaver.ShowPreview = value; }
+		}
+
 		public void Save()
 		{
 			_settingsSaver.Save();
