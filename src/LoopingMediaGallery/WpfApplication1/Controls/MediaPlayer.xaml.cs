@@ -136,14 +136,6 @@ namespace LoopingMediaGallery.Controls
 				InitializeTimer();
 			}
 
-			if (_currentElement != null)
-			{
-				if (_currentElement is Image)
-					(_currentElement as Image).Source = null;
-				else
-					(_currentElement as MediaElement).Source = null;
-			}
-
 			_currentElement = _queuedElement;
 			_queuedElement = null;
 		}
@@ -190,8 +182,8 @@ namespace LoopingMediaGallery.Controls
 
 		private void SwitchElementsVisibility(UIElement currentElement, UIElement queuedElement)
 		{
-			currentElement?.BeginAnimation(UIElement.OpacityProperty, UseFade ? _fadeOut : _cutOut, HandoffBehavior.Compose);
 			queuedElement?.BeginAnimation(UIElement.OpacityProperty, UseFade ? _fadeIn : _cutIn, HandoffBehavior.Compose);
+			currentElement?.BeginAnimation(UIElement.OpacityProperty, UseFade ? _fadeOut : _cutOut, HandoffBehavior.Compose);
 		}
 
 		private void ToggleElementVisibility(UIElement element, bool visible)
