@@ -12,6 +12,12 @@ namespace LoopingMediaGallery
 			//TODO: DI CONTAINER
 			this.DataContext = viewModel;
 
+			var presentationView = new PresentationView(viewModel);
+
+			viewModel.AddPresentationView(presentationView);
+
+			presentationView.Show();
+
 			InitializeComponent();
 		}
 	}

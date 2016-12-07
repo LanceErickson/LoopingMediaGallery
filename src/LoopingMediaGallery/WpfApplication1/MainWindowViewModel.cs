@@ -1,5 +1,6 @@
 ﻿using LoopingMediaGallery.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace LoopingMediaGallery
@@ -69,6 +70,8 @@ namespace LoopingMediaGallery
 			}
 		}
 
+		private PresentationView _presentationView;
+
 		public MainWindowViewModel(ISettingsProvider settingsProvider, IServeMedia mediaServer, IMediaProvider mediaProvider, ISaveSettings settingsSaver)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
@@ -115,7 +118,27 @@ namespace LoopingMediaGallery
 
 		public void PresentHandler()
 		{
+			if (_presentationView == null) return;
 
+			var screens = new List<System.Windows.Forms.Screen>(System.Windows.Forms.Screen.AllScreens);
+
+			System.Windows.Forms.Screen screen;
+			if (screens.Count > 1)
+				screen = screens[1];
+			else
+				screen = screens[0];
+
+			System.Drawing.Rectangle r2 = screen.WorkingArea;
+			_presentationView.Top = r2.Top;
+			_presentationView.Left = r2.Left;
+
+			_presentationView.WindowStyle = System.Windows.WindowStyle.None;
+			_presentationView.WindowState = System.Windows.WindowState.Maximized;
+		}
+
+		internal void AddPresentationView(PresentationView presentationView)
+		{
+			_presentationView = presentationView;
 		}
 
 		public void SettingsHandler()
