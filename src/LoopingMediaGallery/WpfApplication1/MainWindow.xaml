@@ -12,30 +12,48 @@
     <Grid>
         <Grid.Resources>
             <Style TargetType="{x:Type Button}">
-                <Setter Property="Width" Value="64" />
-                <Setter Property="Height" Value="32" />
+                <Setter Property="MinWidth" Value="64" />
+                <Setter Property="MinHeight" Value="32" />
                 <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Margin" Value="-1,0,-1,0" />
             </Style>
             <Style TargetType="{x:Type ToggleButton}">
-                <Setter Property="Width" Value="64" />
-                <Setter Property="Height" Value="32" />
+                <Setter Property="MinWidth" Value="64" />
+                <Setter Property="MinHeight" Value="32" />
                 <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Margin" Value="-1,0,-1,0" />
             </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="9*" />
-            <RowDefinition Height="1*" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:MediaPlayer Grid.Row="0" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <ToggleButton Content="{Binding Play, Converter={qc:QuickConverter '$P == false ? \'Play\' : \'Stop\''}}" IsChecked="{Binding Play, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Content="Reset" Click="{qc:QuickEvent '$dataContext.ResetHandler()'}" />
-            <Button Content="Next" Click="{qc:QuickEvent '$dataContext.NextHandler()'}" />
-            <Button Content="Previous" Click="{qc:QuickEvent '$dataContext.PreviousHandler()'}" />
-            <Button Content="Blank" Click="{qc:QuickEvent '$dataContext.BlankHandler()'}" />
-            <Button Content="Present" Click="{qc:QuickEvent '$dataContext.PresentHandler()'}" />
-            <Button Content="Settings" Click="{qc:QuickEvent '$dataContext.SettingsHandler()'}" />
-            <ToggleButton Content="{Binding Mute, Converter={qc:QuickConverter '$P == false ? \'Mute\' : \'Unmute\''}}" IsChecked="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" />
-        </StackPanel>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <controls:MediaPlayer Grid.RowSpan="7" Grid.ColumnSpan="6" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="True" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+        <ToggleButton Grid.Row="7" Grid.Column="0" Content="{Binding Play, Converter={qc:QuickConverter '$P == false ? \'Play\' : \'Stop\''}}" IsChecked="{Binding Play, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Grid.Row="7" Grid.Column="1" Content="Reset" Click="{qc:QuickEvent '$dataContext.ResetHandler()'}" />
+        <Button Grid.Row="7" Grid.Column="2" Content="Previous" Click="{qc:QuickEvent '$dataContext.PreviousHandler()'}" />
+        <Button Grid.Row="7" Grid.Column="3" Content="Next" Click="{qc:QuickEvent '$dataContext.NextHandler()'}" />
+        <Button Grid.Row="7" Grid.Column="4" Content="Blank" Click="{qc:QuickEvent '$dataContext.BlankHandler()'}" />
+        <Button Grid.Row="7" Grid.Column="5" Content="Present" Click="{qc:QuickEvent '$dataContext.PresentHandler()'}" />
+        <Button Grid.Row="0" Grid.Column="5" Content="Settings" Opacity=".25" Click="{qc:QuickEvent '$dataContext.SettingsHandler()'}" />
+        <ToggleButton Grid.Row="6" Grid.Column="5" Opacity=".25" Content="{Binding Mute, Converter={qc:QuickConverter '$P == false ? \'Mute\' : \'Unmute\''}}" IsChecked="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" />
     </Grid>
 </Window>
