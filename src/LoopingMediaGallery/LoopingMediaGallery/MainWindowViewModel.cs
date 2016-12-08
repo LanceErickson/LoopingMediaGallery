@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 
 namespace LoopingMediaGallery
 {
@@ -57,31 +58,9 @@ namespace LoopingMediaGallery
 			}
 		}
 
-		private bool _useFade = false;
-		public bool UseFade
-		{
-			get { return _useFade; }
-			set
-			{
-				if (_useFade == value)
-					return;
-				_useFade = value;
-				SendPropertyChanged(nameof(UseFade));
-			}
-		}
+		public bool UseFade => _settingsProvider.UseFade;
 
-		private bool _showPreview = false;
-		public bool ShowPreview
-		{
-			get { return _showPreview; }
-			set
-			{
-				if (_showPreview == value)
-					return;
-				_showPreview = value;
-				SendPropertyChanged(nameof(ShowPreview));
-			}
-		}
+		public bool ShowPreview => _settingsProvider.ShowPreview;
 
 		private PresentationView _presentationView;
 
@@ -99,18 +78,25 @@ namespace LoopingMediaGallery
 
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
-				if ((o as System.Configuration.SettingChangingEventArgs).SettingName == nameof(_settingsProvider.UseFade))
-					UseFade = (bool)(o as System.Configuration.SettingChangingEventArgs).NewValue;
+				var settingName = (o as System.Configuration.SettingChangingEventArgs).SettingName;
+				switch (settingName)
+				{
+					case nameof(_settingsProvider.UseFade):
+						App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged(nameof(UseFade))));
+						break;
+				}
 			};
 
+			_mediaProvider.MediaCollectionPopulated += (s, o) =>
+				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged(nameof(CurrentMedia))));
+
 			_mediaProvider.ForceUpdate();
-			UseFade = _settingsProvider.UseFade;
-			ShowPreview = _settingsProvider.ShowPreview;
+			SendPropertyChanged(nameof(_settingsProvider.ShowPreview));
 		}
 
 		public void MediaHasEnded()
 		{
-			ShowPreview = _settingsProvider.ShowPreview;
+			SendPropertyChanged(nameof(_settingsProvider.ShowPreview));
 			NextHandler();
 		}
 

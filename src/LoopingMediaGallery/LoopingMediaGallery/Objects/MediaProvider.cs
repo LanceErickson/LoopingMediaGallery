@@ -18,9 +18,19 @@ namespace LoopingMediaGallery.Objects
 			_settingsProvider = settingsProvider;
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
-				if ((o as System.Configuration.SettingChangingEventArgs).SettingName != nameof(_settingsProvider.RefreshRate)) return;
-				_fileRefreshTimer.Dispose();
-				InitializeTimer();
+				var settingName = (o as System.Configuration.SettingChangingEventArgs).SettingName;
+				switch (settingName)
+				{
+					case nameof(_settingsProvider.FolderPath):
+						_fileRefreshTimer.Dispose();
+						App.Current.Dispatcher.BeginInvoke(new Action(() => ScanFolderPath(null)));
+						InitializeTimer();
+						break;
+					case nameof(_settingsProvider.RefreshRate):
+						_fileRefreshTimer.Dispose();
+						InitializeTimer();
+						break;
+				}
 			};
 
 			MediaObjectCollection = new List<IMediaObject>();
@@ -35,23 +45,26 @@ namespace LoopingMediaGallery.Objects
 
 		private void ScanFolderPath(object state)
 		{
-			if (string.IsNullOrEmpty(_settingsProvider.FolderPath) || string.IsNullOrWhiteSpace(_settingsProvider.FolderPath) || !Directory.Exists(_settingsProvider.FolderPath))
-				return;
-
-			string[] files = Directory.GetFiles(_settingsProvider.FolderPath);
-
 			var mediaCollection = new List<IMediaObject>();
 
-			foreach (var file in files)
+			if (!(string.IsNullOrEmpty(_settingsProvider.FolderPath) || string.IsNullOrWhiteSpace(_settingsProvider.FolderPath) || !Directory.Exists(_settingsProvider.FolderPath)))
 			{
-				var ext = Path.GetExtension(file);
+				string[] files = Directory.GetFiles(_settingsProvider.FolderPath);
+				
+				foreach (var file in files)
+				{
+					var ext = Path.GetExtension(file);
 
-				if (_settingsProvider.ImageFormats.Contains(ext.ToLower()))
-					mediaCollection.Add(new LocalImageObject(_settingsProvider, file));
+					if (_settingsProvider.ImageFormats.Contains(ext.ToLower()))
+						mediaCollection.Add(new LocalImageObject(_settingsProvider, file));
 
-				if (_settingsProvider.VideoFormats.Contains(ext.ToLower()))
-					mediaCollection.Add(new LocalVideoObject(file));
+					if (_settingsProvider.VideoFormats.Contains(ext.ToLower()))
+						mediaCollection.Add(new LocalVideoObject(file));
+				}
 			}
+
+			if (MediaObjectCollection.Count == 0 && mediaCollection.Count > 0)
+				MediaCollectionPopulated?.Invoke(this, new EventArgs());
 
 			MediaObjectCollection = mediaCollection;			
 		}
@@ -59,5 +72,7 @@ namespace LoopingMediaGallery.Objects
 		public IList<IMediaObject> MediaObjectCollection { get; internal set; }
 
 		public void ForceUpdate() => ScanFolderPath(null);
+
+		public event EventHandler MediaCollectionPopulated;
 	}
 }

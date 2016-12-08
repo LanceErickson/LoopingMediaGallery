@@ -1,15 +1,19 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using LoopingMediaGallery.Interfaces;
 using System;
+using System.ComponentModel;
 
 namespace LoopingMediaGallery
 {
-	public class SettingsWindowViewModel
+	public class SettingsWindowViewModel : INotifyPropertyChanged
 	{
 		private readonly ISettingsProvider _settingsProvider;
 		private readonly ISaveSettings _settingsSaver;
 
 		public event EventHandler SendNeedsClose;
+		public event PropertyChangedEventHandler PropertyChanged;
+		public void SendPropertyChanged(string propertyName)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		public SettingsWindowViewModel(ISettingsProvider settingsProvider, ISaveSettings settingsSaver)
 		{
@@ -74,6 +78,7 @@ namespace LoopingMediaGallery
 			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
 			{
 				FolderPath = dlg.FileName;
+				SendPropertyChanged(nameof(FolderPath));
 			}
 		}
 	}

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LoopingMediaGallery.Interfaces
 {
@@ -7,5 +8,7 @@ namespace LoopingMediaGallery.Interfaces
 		IList<IMediaObject> MediaObjectCollection { get; }
 
 		void ForceUpdate();
+
+		event EventHandler MediaCollectionPopulated;
 	}
 }

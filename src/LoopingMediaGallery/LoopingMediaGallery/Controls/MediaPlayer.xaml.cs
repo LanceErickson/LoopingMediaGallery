@@ -151,7 +151,11 @@ namespace LoopingMediaGallery.Controls
 
 		private void InitializeTimer()
 		{
-			_durationTimer = new Timer((s) => Dispatcher.BeginInvoke(new Action(() => MediaEnded?.Invoke(this, new EventArgs()))), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
+			if (Source != null)
+			{
+				DisposeTimer();
+				_durationTimer = new Timer((s) => Dispatcher.BeginInvoke(new Action(() => MediaEnded?.Invoke(this, new EventArgs()))), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
+			}
 		}
 
 		private void SetupVideo(IMediaObject media)
