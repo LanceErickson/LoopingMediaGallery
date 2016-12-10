@@ -250,6 +250,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\videoThumb.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="x64\MediaInfo.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

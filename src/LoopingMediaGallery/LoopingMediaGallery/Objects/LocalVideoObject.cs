@@ -1,4 +1,5 @@
 ﻿using LoopingMediaGallery.Interfaces;
+using MediaInfoDotNet;
 using System;
 using System.IO;
 
@@ -13,7 +14,7 @@ namespace LoopingMediaGallery.Objects
 
 			Source = new Uri(source);
 
-			var info = new MediaInfoDotNet.MediaFile(source);
+			var info = new MediaFile(source);
 			if (info == null) throw new ArgumentException(nameof(source));
 
 			Duration = TimeSpan.FromMilliseconds(info.General.Duration);

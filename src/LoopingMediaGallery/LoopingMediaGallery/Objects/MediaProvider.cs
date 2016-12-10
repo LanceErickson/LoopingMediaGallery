@@ -22,12 +22,10 @@ namespace LoopingMediaGallery.Objects
 				switch (settingName)
 				{
 					case nameof(_settingsProvider.FolderPath):
-						_fileRefreshTimer.Dispose();
 						App.Current.Dispatcher.BeginInvoke(new Action(() => ScanFolderPath()));
 						InitializeTimer();
 						break;
 					case nameof(_settingsProvider.RefreshRate):
-						_fileRefreshTimer.Dispose();
 						InitializeTimer();
 						break;
 				}
@@ -44,6 +42,7 @@ namespace LoopingMediaGallery.Objects
 		{
 			if (_fileRefreshTimer != null)
 				_fileRefreshTimer.Dispose();
+			if (_settingsProvider.RefreshRate < 1) return;
 			_fileRefreshTimer = new Timer(TimeSpan.FromMinutes(_settingsProvider.RefreshRate).TotalMilliseconds);
 			_fileRefreshTimer.Elapsed += (s, o) => ScanFolderPath();
 			_fileRefreshTimer.Enabled = true;
