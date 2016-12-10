@@ -8,7 +8,7 @@ namespace LoopingMediaGallery.Interfaces
 		Video
 	}
 
-	public interface IMediaObject
+	public interface IMediaObject : IComparable<IMediaObject>
 	{
 		Uri Source { get; }
 

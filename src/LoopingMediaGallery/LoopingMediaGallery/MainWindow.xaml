@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LoopingMediaGallery"
         xmlns:controls="clr-namespace:LoopingMediaGallery.Controls"
+        xmlns:converters="clr-namespace:LoopingMediaGallery.Converters"
         mc:Ignorable="d"
         Title="LoopingMediaGallery"
         xmlns:qc="http://QuickConverter.CodePlex.com/"
-        Height="350" Width="525">
+        Height="400" Width="525">
     <Grid>
         <Grid.Resources>
             <Style TargetType="{x:Type Button}">
@@ -36,6 +37,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition Height="2*" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -46,14 +48,29 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <controls:MediaPlayer Grid.RowSpan="7" Grid.ColumnSpan="6" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{qc:MultiBinding '$P0 ## $P1', P0={Binding Play, UpdateSourceTrigger=PropertyChanged}, P1={Binding ShowPreview}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="True" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Visibility="{Binding ShowPreview, Converter={qc:QuickConverter '$P ? Visibility.Visible : Visibility.Collapsed'}, UpdateSourceTrigger=PropertyChanged}"/>
-        <ToggleButton Grid.Row="7" Grid.Column="0" Content="{Binding Play, Converter={qc:QuickConverter '$P == false ? \'Play\' : \'Stop\''}}" IsChecked="{Binding Play, UpdateSourceTrigger=PropertyChanged}" />
-        <Button Grid.Row="7" Grid.Column="1" Content="Reset" Click="{qc:QuickEvent '$dataContext.ResetHandler()'}" />
-        <Button Grid.Row="7" Grid.Column="2" Content="Previous" Click="{qc:QuickEvent '$dataContext.PreviousHandler()'}" />
-        <Button Grid.Row="7" Grid.Column="3" Content="Next" Click="{qc:QuickEvent '$dataContext.NextHandler()'}" />
-        <Button Grid.Row="7" Grid.Column="4" Content="Blank" Click="{qc:QuickEvent '$dataContext.BlankHandler()'}" />
-        <Button Grid.Row="7" Grid.Column="5" Content="Present" Click="{qc:QuickEvent '$dataContext.PresentHandler()'}" />
+        <controls:MediaPlayer Grid.RowSpan="7" Grid.ColumnSpan="6" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{qc:MultiBinding '$P0 ## $P1', P0={Binding Play, UpdateSourceTrigger=PropertyChanged}, P1={Binding ShowPreview}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="True" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Visibility="{Binding ShowPreview, Converter={qc:QuickConverter '$P ? Visibility.Visible : Visibility.Collapsed'}, UpdateSourceTrigger=PropertyChanged}" />
+        <ToggleButton Grid.Row="8" Grid.Column="0" Content="{Binding Play, Converter={qc:QuickConverter '$P == false ? \'Play\' : \'Stop\''}}" IsChecked="{Binding Play, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Grid.Row="8" Grid.Column="1" Content="Reset" Click="{qc:QuickEvent '$dataContext.ResetHandler()'}" />
+        <Button Grid.Row="8" Grid.Column="2" Content="Previous" Click="{qc:QuickEvent '$dataContext.PreviousHandler()'}" />
+        <Button Grid.Row="8" Grid.Column="3" Content="Next" Click="{qc:QuickEvent '$dataContext.NextHandler()'}" />
+        <Button Grid.Row="8" Grid.Column="4" Content="Blank" Click="{qc:QuickEvent '$dataContext.BlankHandler()'}" />
+        <Button Grid.Row="8" Grid.Column="5" Content="Present" Click="{qc:QuickEvent '$dataContext.PresentHandler()'}" />
         <Button Grid.Row="0" Grid.Column="5" Content="Settings" Opacity=".25" Click="{qc:QuickEvent '$dataContext.SettingsHandler()'}" />
         <ToggleButton Grid.Row="6" Grid.Column="5" Opacity=".25" Content="{Binding Mute, Converter={qc:QuickConverter '$P == false ? \'Mute\' : \'Unmute\''}}" IsChecked="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" />
+
+        <ListBox Grid.Row="7" Grid.ColumnSpan="6" qc:QuickEvent.P0="{Binding .}" ItemsSource="{Binding MediaCollection, UpdateSourceTrigger=PropertyChanged}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel IsItemsHost="True" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="1" BorderBrush="Black" Padding="1" Cursor="Hand" MouseDown="{qc:QuickEvent '$P0.SelectMedia($dataContext)'}">
+                        <Image Source="{qc:MultiBinding P1={Binding Source}, P2={Binding Type}, ExternalConverter={x:Static converters:UriToBitmapImageConverter.Instance}, ConverterParameter=32}" Height="32" Width="32"/>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>

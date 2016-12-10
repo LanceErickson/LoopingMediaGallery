@@ -5,9 +5,11 @@ namespace LoopingMediaGallery.Interfaces
 {
 	public interface IMediaProvider
 	{
-		IList<IMediaObject> MediaObjectCollection { get; }
+		ISet<IMediaObject> MediaObjectCollection { get; }
 
 		void ForceUpdate();
+
+		event EventHandler MediaCollectionChanged;
 
 		event EventHandler MediaCollectionPopulated;
 	}

@@ -18,7 +18,7 @@ namespace LoopingMediaGallery.Objects
 
 		public IMediaObject CurrentMedia
 			=> _mediaProvider.MediaObjectCollection.Count() >= _currentIndex + 1
-						? _mediaProvider.MediaObjectCollection[(int)_currentIndex]
+						? _mediaProvider.MediaObjectCollection.ElementAt((int)_currentIndex)
 						: null;
 
 		public int MaxIndex => _mediaProvider.MediaObjectCollection?.Count() - 1 ?? 0;
@@ -41,12 +41,14 @@ namespace LoopingMediaGallery.Objects
 
 		public void ServeSpecific(int index)
 		{
-			if (index > 0 && index <= MaxIndex)
+			if (MaxIndex == -1)	return;
+			if (index > -1 && index <= MaxIndex)
 				_currentIndex = (uint)index;
 		}
 
 		public void Reset()
 		{
+			if (MaxIndex == -1)	return;
 			_currentIndex = 0;
 		}
 	}

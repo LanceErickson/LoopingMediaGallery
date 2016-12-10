@@ -22,7 +22,7 @@ namespace LoopingMediaGallery
 			// Add the System namespace so we can use primitive types (i.e. int, etc.).
 			QuickConverter.EquationTokenizer.AddNamespace(typeof(object));
 			// Add the System.Windows namespace so we can use Visibility.Collapsed, etc.
-			QuickConverter.EquationTokenizer.AddNamespace(typeof(System.Windows.Visibility));
+			QuickConverter.EquationTokenizer.AddNamespace(typeof(Visibility));
 		}
 		private IUnityContainer _container;
 
@@ -33,6 +33,7 @@ namespace LoopingMediaGallery
 			_container.RegisterType<IMediaProvider, MediaProvider>(new ContainerControlledLifetimeManager());
 			_container.RegisterType<ISettingsProvider, Objects.SettingsProvider>();
 			_container.RegisterType<ISaveSettings, SettingsSaver>();
+			_container.RegisterType<IIntervalTimer, IntervalTimer>();
 
 			MainWindow mainWindow = _container.Resolve<MainWindow>();
 			mainWindow.Show();

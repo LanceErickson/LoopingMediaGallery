@@ -20,10 +20,8 @@ namespace LoopingMediaGallery.Controls
 			MuteAudio();
 		}
 
-		private Timer _durationTimer;
 		private UIElement _currentElement;
 		private UIElement _queuedElement;
-		public event EventHandler MediaEnded;
 		private DoubleAnimation _fadeIn = new DoubleAnimation(0d, 1d, TimeSpan.FromSeconds(0.7d));
 		private DoubleAnimation _fadeOut = new DoubleAnimation(1d, 0d, TimeSpan.FromSeconds(0.7d));
 		private DoubleAnimation _cutIn = new DoubleAnimation(0d, 1d, TimeSpan.FromSeconds(0.0d));
@@ -44,12 +42,10 @@ namespace LoopingMediaGallery.Controls
 			if (Play)
 			{
 				(_currentElement as MediaElement)?.Play();
-				InitializeTimer();
 			}
 			else
 			{
 				(_currentElement as MediaElement)?.Stop();
-				DisposeTimer();
 			}
 		}
 		
@@ -91,7 +87,6 @@ namespace LoopingMediaGallery.Controls
 		{
 			if (Blank)
 			{
-				Play = false;
 				ToggleElementVisibility(_currentElement, false);
 			}
 			else
@@ -125,37 +120,16 @@ namespace LoopingMediaGallery.Controls
 
 		private void StartPlaying()
 		{
-			DisposeTimer();
-
 			(_currentElement as MediaElement)?.Stop();
 			
 			SwitchElementsVisibility(_currentElement, _queuedElement);
 			if (Play)
 			{
 				(_queuedElement as MediaElement)?.Play();
-				InitializeTimer();
 			}
 
 			_currentElement = _queuedElement;
 			_queuedElement = null;
-		}
-
-		private void DisposeTimer()
-		{
-			if (_durationTimer != null)
-			{
-				_durationTimer.Dispose();
-				_durationTimer = null;
-			}
-		}
-
-		private void InitializeTimer()
-		{
-			if (Source != null)
-			{
-				DisposeTimer();
-				_durationTimer = new Timer((s) => Dispatcher.BeginInvoke(new Action(() => MediaEnded?.Invoke(this, new EventArgs()))), new AutoResetEvent(false), (int)Source.Duration.TotalMilliseconds, (int)Source.Duration.TotalMilliseconds);
-			}
 		}
 
 		private void SetupVideo(IMediaObject media)

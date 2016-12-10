@@ -11,6 +11,6 @@
         MinHeight="30" MinWidth="30" WindowStyle="None"
         Background="Black" MouseDown="Window_MouseDown">
     <Grid>
-        <controls:MediaPlayer Grid.Row="0" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" MediaEnded="{qc:QuickEvent '$dataContext.MediaHasEnded()'}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+        <controls:MediaPlayer Grid.Row="0" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
     </Grid>
 </Window>

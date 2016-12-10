@@ -144,7 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\UriToBitmapImageConverter.cs" />
+    <Compile Include="Interfaces\IIntervalTimer.cs" />
     <Compile Include="Interfaces\ISaveSettings.cs" />
+    <Compile Include="Objects\IntervalTimer.cs" />
     <Compile Include="Objects\SettingsSaver.cs" />
     <Compile Include="PresentationView.xaml.cs">
       <DependentUpon>PresentationView.xaml</DependentUpon>
@@ -246,6 +249,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\videoThumb.png" />
     <Content Include="x64\MediaInfo.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

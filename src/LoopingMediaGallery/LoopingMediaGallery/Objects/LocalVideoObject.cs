@@ -24,5 +24,13 @@ namespace LoopingMediaGallery.Objects
 		public Uri Source { get; }
 
 		public MediaType Type => MediaType.Video;
+
+		public int CompareTo(IMediaObject obj)
+		{
+			if (Type != obj.Type) return 0;
+			if (Source.Equals(obj.Source.AbsolutePath)) return 0;
+			if (!Duration.Equals(obj.Duration)) return 0;
+			return 1;
+		}
 	}
 }
