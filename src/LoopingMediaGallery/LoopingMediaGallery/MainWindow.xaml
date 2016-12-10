@@ -32,7 +32,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="37.333" />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -66,7 +66,7 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderThickness="1" BorderBrush="Black" Padding="1" Cursor="Hand" MouseDown="{qc:QuickEvent '$P0.SelectMedia($dataContext)'}">
+                    <Border BorderThickness="2" BorderBrush="{qc:MultiBinding P0={Binding Path=DataContext.CurrentMedia, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListBox}}, P1={Binding .}, ExternalConverter={qc:QuickMultiConverter '$P0 != null ? $P0.Equals($P1) ? $V0 : $V1 : $V1', V0={x:Static Brushes.Red}, V1={x:Static Brushes.Black}}}" Padding="1" Cursor="Hand" MouseDown="{qc:QuickEvent '$P0.SelectMedia($dataContext)'}">
                         <Image Source="{qc:MultiBinding P1={Binding Source}, P2={Binding Type}, ExternalConverter={x:Static converters:UriToBitmapImageConverter.Instance}, ConverterParameter=32}" Height="32" Width="32"/>
                     </Border>
                 </DataTemplate>
