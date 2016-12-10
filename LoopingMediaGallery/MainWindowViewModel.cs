@@ -4,6 +4,10 @@ using System.Linq;
 using System.IO;
 using System.Windows.Input;
 using System.ComponentModel;
+using System.Windows.Threading;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Drawing;
 
 namespace LoopingMediaGallery
 {
@@ -15,6 +19,14 @@ namespace LoopingMediaGallery
 
         private LoopingMediaController _loopingMediaController;
 
+		public event PropertyChangedEventHandler PropertyChanged;
+		public void SendPropertyChanged(string propertyName)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		#region Properties
 		private string _folderPath;
         public string FolderPath
 		{
@@ -30,7 +42,6 @@ namespace LoopingMediaGallery
 					_loopingMediaController.Stop();
 					ScanFolderPath(this);
 					_loopingMediaController.Reset();
-					_loopingMediaController.Start();
 				}
 				else
 				{
@@ -39,34 +50,26 @@ namespace LoopingMediaGallery
 			}
 		}
 
-        private LoopingMediaControl _previewPane;
+		//private LoopingMediaControl _previewPane;
+		//public LoopingMediaControl PreviewPane
+  //      {
+  //          get
+  //          {
+  //              return _previewPane;
+  //          }
+  //          set
+  //          {
+  //              if(_previewPane != null)
+  //              {
+		//			_loopingMediaController.Unsubscribe(_previewPane);
+  //              }
 
-		public event PropertyChangedEventHandler PropertyChanged;
-		public void SendPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
+  //              _previewPane = value;
 
-		public LoopingMediaControl PreviewPane
-        {
-            get
-            {
-                return _previewPane;
-            }
-            set
-            {
-                if(_previewPane != null)
-                {
-					_loopingMediaController.Unsubscribe(_previewPane);
-                }
-
-                _previewPane = value;
-
-                if(_previewPane != null)
-                    _loopingMediaController.Subscribe(_previewPane);
-            }
-        }
+  //              if(_previewPane != null)
+  //                  _loopingMediaController.Subscribe(_previewPane);
+  //          }
+  //      }
 
         public int Duration
         {
@@ -127,14 +130,9 @@ namespace LoopingMediaGallery
 				InitializeRefreshTimer();
 			}
 		}
-
-		private void LoadSettings()
-		{
-			FolderPath = (string)Properties.Settings.Default["FolderPath"] ?? string.Empty;
-			Duration = (int?)Properties.Settings.Default["Duration"] ?? 10;
-			RefreshRate = (int?)Properties.Settings.Default["RefreshRate"] ?? 1;
-        }
-
+#endregion
+		
+		#region Commands 
 		public ICommand SaveCommand
 		{
 			get;
@@ -267,7 +265,30 @@ namespace LoopingMediaGallery
             _loopingMediaController.Blank();
         }
 
-        public MainWindowViewModel()
+		public ICommand MuteCommand
+		{
+			get;
+			internal set;
+		}
+
+		public void CreateMuteCommand()
+		{
+			MuteCommand = new RelayCommand(MuteExecute, CanExecuteMuteCommand);
+		}
+
+		private bool CanExecuteMuteCommand(object obj)
+		{
+			return true;
+		}
+
+		private void MuteExecute(object obj)
+		{
+			_loopingMediaController.Mute();
+		}
+
+		#endregion
+
+		public MainWindowViewModel()
         {
             CreateCommands();
             _loopingMediaController = new LoopingMediaController();
@@ -277,7 +298,42 @@ namespace LoopingMediaGallery
 
             _loopingMediaController.IdleImage = this.IdleImage;
             _loopingMediaController.FileList = this.FileList;
+
+			_previewTimer = new DispatcherTimer();
+			_previewTimer.Tick += _previewTimer_Tick;
+			_previewTimer.Interval = TimeSpan.FromSeconds(1);
+			_previewTimer.Start();
         }
+
+		private void _previewTimer_Tick(object sender, EventArgs e)
+		{
+			if (PreviewImage != null)
+				PreviewImage.Clear();
+			PreviewImage = null;
+			PreviewImage = _loopingMediaController.GetPreviewBitmap();
+		}
+
+		private RenderTargetBitmap _previewImage;
+		public RenderTargetBitmap PreviewImage
+		{
+			get { return _previewImage; }
+			set
+			{
+				if (_previewImage == value)
+					return;
+				_previewImage = value;
+				SendPropertyChanged("PreviewImage");
+			}
+		}
+
+		private DispatcherTimer _previewTimer;
+
+		private void LoadSettings()
+		{
+			FolderPath = (string)Properties.Settings.Default["FolderPath"] ?? string.Empty;
+			Duration = (int?)Properties.Settings.Default["Duration"] ?? 10;
+			RefreshRate = (int?)Properties.Settings.Default["RefreshRate"] ?? 1;
+		}
 
 		private void InitializeRefreshTimer()
 		{
@@ -296,6 +352,8 @@ namespace LoopingMediaGallery
             CreateNextCommand();
             CreatePreviousCommand();
 			CreateSaveCommand();
+			CreateBlankCommand();
+			CreateMuteCommand();
         }
 
         public void Next(object sender, EventArgs e)

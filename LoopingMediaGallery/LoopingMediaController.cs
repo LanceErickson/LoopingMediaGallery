@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows.Media.Imaging;
 
 namespace LoopingMediaGallery
 {
@@ -77,6 +78,11 @@ namespace LoopingMediaGallery
 
         private void InitializeTimer()
         {
+			if(_mediaSwitchTimer != null)
+			{
+				_mediaSwitchTimer.Dispose();
+				_mediaSwitchTimer = null;
+			}
             _mediaSwitchTimer = new System.Threading.Timer(GotoNext, new System.Threading.AutoResetEvent(false), (int)TimeSpan.FromSeconds(Duration).TotalMilliseconds, (int)TimeSpan.FromSeconds(Duration).TotalMilliseconds);
         }
 
@@ -95,23 +101,31 @@ namespace LoopingMediaGallery
         internal void Subscribe(LoopingMediaControl loopingMediaControl)
         {
             _views.Add(loopingMediaControl);
+			if(_views.Count == 1)
+				loopingMediaControl.OnMediaFailure += MediaFailed;
         }
 
         internal void Unsubscribe(LoopingMediaControl loopingMediaControl)
         {
             _views.Remove(loopingMediaControl);
+			if (_views.Count == 0)
+				loopingMediaControl.OnMediaFailure -= MediaFailed;
         }
+
+		private void MediaFailed(object sender, EventArgs e)
+		{
+			((LoopingMediaControl)sender).OnVideoFinished = null;
+			Next();
+		}
 
         internal void Start()
         {
             Running = true;
-            InitializeTimer();
             Next();
         }
 
         internal void Stop()
         {
-			_views.ForEach(x => x.Clear());
             Running = false;
             if(_mediaSwitchTimer != null)
                 _mediaSwitchTimer.Dispose();
@@ -124,9 +138,14 @@ namespace LoopingMediaGallery
 				_mediaSwitchTimer.Dispose();
 				_mediaSwitchTimer = null;
 			}
-            // throw new NotImplementedException();
-            if (FileList == null || FileList.Count == 0)
-                return;
+
+			if (FileList == null || FileList.Count == 0)
+			{
+				if(Running)
+					InitializeTimer();
+				return;
+			}
+
             MediaIndex++;
 
             string source = FileList[MediaIndex-1];
@@ -138,9 +157,19 @@ namespace LoopingMediaGallery
                     Next();
                     return;
                 }
-                _views.ForEach(x => x.ShowImage(source));
 
-				InitializeTimer();
+				try
+				{
+					_views.ForEach(x => x.ShowImage(source));
+				}
+				catch
+				{
+					Next();
+					return;
+				}
+
+				if(Running)
+					InitializeTimer();
 			}
 
             if(videoFormatExtensions.Contains(Path.GetExtension(source), StringComparer.OrdinalIgnoreCase))
@@ -150,11 +179,22 @@ namespace LoopingMediaGallery
                     Next();
                     return;
                 }
-				var firstPlayer = _views.FirstOrDefault();
-				if(firstPlayer != null)
+
+				try
 				{
-					firstPlayer.OnVideoFinished += VideoFinished;
-					firstPlayer.ShowVideo(source);
+					//var firstPlayer = _views.FirstOrDefault();
+					//if (firstPlayer != null)
+					//{
+					//	firstPlayer.OnVideoFinished += VideoFinished;
+					//	firstPlayer.ShowVideo(source);
+					//}
+					_views.ForEach(x => x.OnVideoFinished += VideoFinished);
+					_views.ForEach(x => x.ShowVideo(source));
+				}
+				catch
+				{
+					Next();
+					return;
 				}
 
                // _views.ForEach(x => x.OnVideoFinished += VideoFinished);
@@ -172,7 +212,6 @@ namespace LoopingMediaGallery
 			((LoopingMediaControl)sender).OnVideoFinished -= VideoFinished;
             if (Running)
             {
-                InitializeTimer();
                 Next();
             }
         }
@@ -183,10 +222,11 @@ namespace LoopingMediaGallery
             Next();
         }
 
-        internal void Blank()
-        {
-
-        }
+		internal void Blank()
+		{
+			_views.ForEach(x => x.Clear());
+			Stop();
+		}
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -208,14 +248,33 @@ namespace LoopingMediaGallery
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~LoopingMediaController() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
+		internal void Mute()
+		{
+			var view = _views.FirstOrDefault();
+			if(view != null)
+			{
+				view.IsMuted = !view.IsMuted;
+			}
+		}
 
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
+		public RenderTargetBitmap GetPreviewBitmap()
+		{
+			var view = _views.FirstOrDefault();
+			if (view != null)
+			{
+				return view.RenderPreviewBitmap();
+			}
+			return null;
+		}
+
+		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+		// ~LoopingMediaController() {
+		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+		//   Dispose(false);
+		// }
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(true);
