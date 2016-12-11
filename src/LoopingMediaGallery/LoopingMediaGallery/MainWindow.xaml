@@ -14,7 +14,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Controls/AsyncImageStyle.xaml" />
-                <ResourceDictionary Source="Controls/MediaPlayerStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
