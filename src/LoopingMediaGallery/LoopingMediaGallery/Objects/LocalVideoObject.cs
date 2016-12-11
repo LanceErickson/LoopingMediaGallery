@@ -29,9 +29,12 @@ namespace LoopingMediaGallery.Objects
 		public int CompareTo(IMediaObject obj)
 		{
 			if (Type != obj.Type) return 0;
-			if (Source.Equals(obj.Source.AbsolutePath)) return 0;
+			if (!Source.AbsolutePath.Equals(obj.Source.AbsolutePath)) return 0;
 			if (!Duration.Equals(obj.Duration)) return 0;
 			return 1;
 		}
+
+		public override bool Equals(object obj)
+			=> obj is IMediaObject ? CompareTo((IMediaObject)obj) == 1 : false;
 	}
 }

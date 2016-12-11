@@ -8,14 +8,17 @@ namespace LoopingMediaGallery.Objects
 {
 	public class MediaProvider : IMediaProvider
 	{
-		private ISettingsProvider _settingsProvider;
-		private Timer _fileRefreshTimer;
-
-		public MediaProvider(ISettingsProvider settingsProvider)
+		private readonly ISettingsProvider _settingsProvider;
+		private readonly IIntervalTimer _intervalTimer;
+	
+		public MediaProvider(ISettingsProvider settingsProvider, IIntervalTimer intervalTimer)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
+			if (intervalTimer == null) throw new ArgumentNullException(nameof(intervalTimer));
 
 			_settingsProvider = settingsProvider;
+			_intervalTimer = intervalTimer;
+
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
 				var settingName = (o as System.Configuration.SettingChangingEventArgs).SettingName;
@@ -40,16 +43,20 @@ namespace LoopingMediaGallery.Objects
 
 		private void InitializeTimer()
 		{
-			if (_fileRefreshTimer != null)
-				_fileRefreshTimer.Dispose();
-			if (_settingsProvider.RefreshRate < 1) return;
-			_fileRefreshTimer = new Timer(TimeSpan.FromMinutes(_settingsProvider.RefreshRate).TotalMilliseconds);
-			_fileRefreshTimer.Elapsed += (s, o) => ScanFolderPath();
-			_fileRefreshTimer.Enabled = true;
+			if (_settingsProvider.RefreshRate <= 0) return;
+			_intervalTimer.Initialize(TimeSpan.FromMinutes(_settingsProvider.RefreshRate), ScanFolderPath);
+			_intervalTimer.Start();
 		}
 
 		private void ScanFolderPath()
 		{
+			Console.WriteLine("MediaProvider - Starting to scan folder path.");
+
+			var currentCollectionDictionary = new Dictionary<string, IMediaObject>();
+			foreach (var item in MediaObjectCollection)
+			{
+				currentCollectionDictionary.Add(item.Source.AbsolutePath, item);
+			}
 			var mediaCollection = new HashSet<IMediaObject>();
 
 			if (!(string.IsNullOrEmpty(_settingsProvider.FolderPath) || string.IsNullOrWhiteSpace(_settingsProvider.FolderPath) || !Directory.Exists(_settingsProvider.FolderPath)))
@@ -61,10 +68,20 @@ namespace LoopingMediaGallery.Objects
 					var ext = Path.GetExtension(file);
 
 					if (_settingsProvider.ImageFormats.Contains(ext.ToLower()))
-						mediaCollection.Add(new LocalImageObject(_settingsProvider, file));
+					{
+						if (currentCollectionDictionary.ContainsKey(file))
+							mediaCollection.Add(currentCollectionDictionary[file]);
+						else
+							mediaCollection.Add(new LocalImageObject(_settingsProvider, file));
+					}
 
 					if (_settingsProvider.VideoFormats.Contains(ext.ToLower()))
-						mediaCollection.Add(new LocalVideoObject(file));
+					{
+						if (currentCollectionDictionary.ContainsKey(file))
+							mediaCollection.Add(currentCollectionDictionary[file]);
+						else
+							mediaCollection.Add(new LocalVideoObject(file));
+					}
 				}
 
 				if (MediaObjectCollection.Count == 0 && mediaCollection.Count > 0)
@@ -74,6 +91,8 @@ namespace LoopingMediaGallery.Objects
 					MediaCollectionChanged?.Invoke(this, new EventArgs());
 
 				MediaObjectCollection = mediaCollection;
+
+				Console.WriteLine("MediaProvider - Finished scanning folder path.");
 			}
 		}
 

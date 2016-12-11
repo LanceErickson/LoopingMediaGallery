@@ -4,8 +4,6 @@
 	{
 		IMediaObject CurrentMedia { get; }
 
-		int MaxIndex { get; }
-
 		void NextMedia();
 
 		void PreviousMedia();

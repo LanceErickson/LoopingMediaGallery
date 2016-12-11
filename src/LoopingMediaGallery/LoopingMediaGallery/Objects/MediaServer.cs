@@ -7,49 +7,70 @@ namespace LoopingMediaGallery.Objects
 	public class MediaServer : IServeMedia
 	{
 		private IMediaProvider _mediaProvider;
-		private uint _currentIndex = 0;
 
 		public MediaServer(IMediaProvider mediaProvider)
 		{
 			if (mediaProvider == null) throw new ArgumentNullException(nameof(mediaProvider));
 
 			_mediaProvider = mediaProvider;
+
+			if (_mediaProvider.MediaObjectCollection.Any())
+				CurrentMedia = _mediaProvider.MediaObjectCollection.FirstOrDefault();
+
+			_mediaProvider.MediaCollectionPopulated += (s, o) =>
+			{
+				CurrentMedia = _mediaProvider.MediaObjectCollection.FirstOrDefault();
+			};
 		}
 
-		public IMediaObject CurrentMedia
-			=> _mediaProvider.MediaObjectCollection.Count() >= _currentIndex + 1
-						? _mediaProvider.MediaObjectCollection.ElementAt((int)_currentIndex)
-						: null;
-
-		public int MaxIndex => _mediaProvider.MediaObjectCollection?.Count() - 1 ?? 0;
+		public IMediaObject CurrentMedia { get; private set; }
 
 		public void NextMedia()
 		{
-			if (_currentIndex + 1 > MaxIndex)
-				_currentIndex = 0;
+			if (CurrentMedia != null)
+			{
+				var mediaCollection = _mediaProvider.MediaObjectCollection.ToList();
+				var currentIndex = mediaCollection.ToList().IndexOf(CurrentMedia);
+				if (currentIndex + 1 < mediaCollection.Count)
+					CurrentMedia = mediaCollection[currentIndex + 1];
+				else
+					CurrentMedia = mediaCollection.First();
+			}
 			else
-				_currentIndex++;
+			{
+				if (_mediaProvider.MediaObjectCollection.Any())
+					CurrentMedia = _mediaProvider.MediaObjectCollection.FirstOrDefault();
+			}
 		}
 
 		public void PreviousMedia()
 		{
-			if (_currentIndex - 1 > MaxIndex || _currentIndex - 1 < 0)
-				_currentIndex = 0;
+			if (CurrentMedia != null)
+			{
+				var mediaCollection = _mediaProvider.MediaObjectCollection.ToList();
+				var currentIndex = mediaCollection.ToList().IndexOf(CurrentMedia);
+				if (currentIndex - 1 >= 0)
+					CurrentMedia = mediaCollection[currentIndex - 1];
+				else
+					CurrentMedia = mediaCollection.Last();
+			}
 			else
-				_currentIndex--;
+			{
+				if (_mediaProvider.MediaObjectCollection.Any())
+					CurrentMedia = _mediaProvider.MediaObjectCollection.FirstOrDefault();
+			}
 		}
 
 		public void ServeSpecific(int index)
 		{
-			if (MaxIndex == -1)	return;
-			if (index > -1 && index <= MaxIndex)
-				_currentIndex = (uint)index;
+			if (_mediaProvider.MediaObjectCollection.Count > index && index > -1)
+				CurrentMedia = _mediaProvider.MediaObjectCollection.ToList()[index];
 		}
 
 		public void Reset()
 		{
-			if (MaxIndex == -1)	return;
-			_currentIndex = 0;
+			if (!_mediaProvider.MediaObjectCollection.Any())	return;
+			CurrentMedia = _mediaProvider.MediaObjectCollection.First();
 		}
 	}
 }

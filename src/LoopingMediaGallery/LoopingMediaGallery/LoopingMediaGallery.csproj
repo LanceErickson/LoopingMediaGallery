@@ -144,6 +144,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\AsyncImage.cs" />
+    <Compile Include="Controls\MediaPlayer.xaml.cs" />
+    <Compile Include="Converters\UriToUriConverter.cs" />
     <Compile Include="Converters\UriToBitmapImageConverter.cs" />
     <Compile Include="Interfaces\IIntervalTimer.cs" />
     <Compile Include="Interfaces\ISaveSettings.cs" />
@@ -156,7 +159,11 @@
       <DependentUpon>SettingsWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsWindowViewModel.cs" />
-    <Page Include="Controls\MediaPlayer.xaml">
+    <Page Include="Controls\AsyncImageStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MediaPlayerStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -167,9 +174,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\MediaPlayer.xaml.cs">
-      <DependentUpon>MediaPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\IMediaProvider.cs" />
     <Compile Include="Interfaces\IMediaObject.cs" />
@@ -249,7 +253,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\videoThumb.png" />
+    <Resource Include="Resources\videoThumb.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="x64\MediaInfo.dll">

@@ -36,6 +36,7 @@ namespace LoopingMediaGallery
 
 				if (value)
 				{
+					SendPropertyChanged(nameof(CurrentMedia));
 					_timer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
 					_timer.Start();
 				}
