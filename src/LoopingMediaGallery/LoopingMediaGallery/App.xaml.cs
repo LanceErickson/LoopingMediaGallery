@@ -34,6 +34,7 @@ namespace LoopingMediaGallery
 			_container.RegisterType<ISettingsProvider, Objects.SettingsProvider>();
 			_container.RegisterType<ISaveSettings, SettingsSaver>();
 			_container.RegisterType<IIntervalTimer, IntervalTimer>();
+			_container.RegisterType<IGetViewPreview, PreviewImageProvider>();
 
 			MainWindow mainWindow = _container.Resolve<MainWindow>();
 			mainWindow.Show();

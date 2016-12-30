@@ -150,9 +150,11 @@
     </Compile>
     <Compile Include="Converters\UriToUriConverter.cs" />
     <Compile Include="Converters\UriToBitmapImageConverter.cs" />
+    <Compile Include="Interfaces\IGetViewPreview.cs" />
     <Compile Include="Interfaces\IIntervalTimer.cs" />
     <Compile Include="Interfaces\ISaveSettings.cs" />
     <Compile Include="Objects\IntervalTimer.cs" />
+    <Compile Include="Objects\PreviewImageProvider.cs" />
     <Compile Include="Objects\SettingsSaver.cs" />
     <Compile Include="PresentationView.xaml.cs">
       <DependentUpon>PresentationView.xaml</DependentUpon>

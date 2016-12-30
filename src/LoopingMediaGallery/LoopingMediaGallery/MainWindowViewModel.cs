@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using System.Windows.Media.Imaging;
 
 namespace LoopingMediaGallery
 {
@@ -12,7 +13,9 @@ namespace LoopingMediaGallery
 		private readonly IServeMedia _mediaServer;
 		private readonly IMediaProvider _mediaProvider;
 		private readonly ISaveSettings _settingsSaver;
-		private readonly IIntervalTimer _timer;
+		private readonly IIntervalTimer _mediaTimer;
+		private readonly IIntervalTimer _previewTimer;
+		private readonly IGetViewPreview _viewPreviewProvider;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public void SendPropertyChanged(string propertyName)
@@ -37,12 +40,12 @@ namespace LoopingMediaGallery
 				if (value)
 				{
 					SendPropertyChanged(nameof(CurrentMedia));
-					_timer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
-					_timer.Start();
+					_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
+					_mediaTimer.Start();
 				}
 				else
 				{
-					_timer.Stop();
+					_mediaTimer.Stop();
 				}
 
 				_play = value;
@@ -82,20 +85,37 @@ namespace LoopingMediaGallery
 
 		private PresentationView _presentationView;
 
-		public MainWindowViewModel(ISettingsProvider settingsProvider, IServeMedia mediaServer, IMediaProvider mediaProvider, ISaveSettings settingsSaver, IIntervalTimer timer)
+		private RenderTargetBitmap _previewImage;
+		public RenderTargetBitmap PreviewImage
+		{
+			get { return _previewImage; }
+			set
+			{
+				if (_previewImage == value)
+					return;
+				_previewImage = value;
+				SendPropertyChanged(nameof(PreviewImage));
+			}
+		}
+
+		public MainWindowViewModel(ISettingsProvider settingsProvider, IServeMedia mediaServer, IMediaProvider mediaProvider, ISaveSettings settingsSaver, IIntervalTimer mediaTimer, IIntervalTimer previewTimer, IGetViewPreview viewPreviewProvider)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
 			if (mediaServer == null) throw new ArgumentNullException(nameof(mediaServer));
 			if (mediaProvider == null) throw new ArgumentNullException(nameof(mediaProvider));
 			if (settingsSaver == null) throw new ArgumentNullException(nameof(settingsSaver));
-			if (timer == null) throw new ArgumentNullException(nameof(timer));
+			if (mediaTimer == null) throw new ArgumentNullException(nameof(mediaTimer));
+			if (previewTimer == null) throw new ArgumentNullException(nameof(previewTimer));
+			if (viewPreviewProvider == null) throw new ArgumentNullException(nameof(viewPreviewProvider));
 
 			_settingsProvider = settingsProvider;
 			_mediaServer = mediaServer;
 			_mediaProvider = mediaProvider;
 			_settingsSaver = settingsSaver;
-			_timer = timer;
-
+			_mediaTimer = mediaTimer;
+			_previewTimer = previewTimer;
+			_viewPreviewProvider = viewPreviewProvider;
+			
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
 				var settingName = (o as System.Configuration.SettingChangingEventArgs).SettingName;
@@ -115,6 +135,20 @@ namespace LoopingMediaGallery
 
 			_mediaProvider.ForceUpdate();
 			SendPropertyChanged(nameof(_settingsProvider.ShowPreview));
+
+			_previewTimer.Initialize(TimeSpan.FromSeconds(1), () => UpdatePreview());
+			_previewTimer.Start();
+		}
+
+		private void UpdatePreview()
+		{
+			if (_presentationView != null)
+			{
+				App.Current.Dispatcher.Invoke(new Action(() =>
+				{
+					PreviewImage = _viewPreviewProvider.RenderPreviewBitmap(_presentationView);
+				}));
+			}
 		}
 
 		public void MediaHasEnded()
@@ -127,27 +161,27 @@ namespace LoopingMediaGallery
 		{
 			_mediaServer.Reset();
 			SendPropertyChanged(nameof(CurrentMedia));
-			_timer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
+			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
 			if (Play)
-				_timer.Start();
+				_mediaTimer.Start();
 		}
 
 		public void NextHandler()
 		{
 			_mediaServer.NextMedia();
 			SendPropertyChanged(nameof(CurrentMedia));
-			_timer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
+			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
 			if (Play)
-				_timer.Start();
+				_mediaTimer.Start();
 		}
 
 		public void PreviousHandler()
 		{
 			_mediaServer.PreviousMedia();
 			SendPropertyChanged(nameof(CurrentMedia));
-			_timer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
+			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
 			if(Play)
-				_timer.Start();
+				_mediaTimer.Start();
 		}
 
 		public void BlankHandler() => Blank = !Blank;
@@ -157,9 +191,9 @@ namespace LoopingMediaGallery
 			int index = MediaCollection.IndexOf(media);
 			_mediaServer.ServeSpecific(index);
 			SendPropertyChanged(nameof(CurrentMedia));
-			_timer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
+			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
 			if (Play)
-				_timer.Start();
+				_mediaTimer.Start();
 		}
 
 		public void PresentHandler()

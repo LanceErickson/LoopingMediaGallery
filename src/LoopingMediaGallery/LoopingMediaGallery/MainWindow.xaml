@@ -45,7 +45,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition Height="2.5*" />
+            <RowDefinition Height="85" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -56,7 +56,8 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <controls:MediaPlayer Grid.RowSpan="7" Grid.ColumnSpan="6" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{qc:MultiBinding '$P0 ## $P1', P0={Binding Play, UpdateSourceTrigger=PropertyChanged}, P1={Binding ShowPreview}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="True" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Visibility="{Binding ShowPreview, Converter={qc:QuickConverter '$P ? Visibility.Visible : Visibility.Collapsed'}, UpdateSourceTrigger=PropertyChanged}" />
+        <Canvas Background="Black" Grid.RowSpan="7" Grid.ColumnSpan="6" />
+        <Image Grid.RowSpan="7" Grid.ColumnSpan="6" Stretch="Fill"  Source="{Binding PreviewImage, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ShowPreview, Converter={qc:QuickConverter '$P ? Visibility.Visible : Visibility.Collapsed'}, UpdateSourceTrigger=PropertyChanged}" />
         <ToggleButton Grid.Row="8" Grid.Column="0" Content="{Binding Play, Converter={qc:QuickConverter '$P == false ? \'Play\' : \'Stop\''}}" IsChecked="{Binding Play, UpdateSourceTrigger=PropertyChanged}" />
         <Button Grid.Row="8" Grid.Column="1" Content="Reset" Click="{qc:QuickEvent '$dataContext.ResetHandler()'}" />
         <Button Grid.Row="8" Grid.Column="2" Content="Previous" Click="{qc:QuickEvent '$dataContext.PreviousHandler()'}" />
