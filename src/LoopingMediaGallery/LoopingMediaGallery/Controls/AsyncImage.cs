@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LoopingMediaGallery.Interfaces;
+using LoopingMediaGallery.Objects;
+using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,7 +12,14 @@ namespace LoopingMediaGallery.Controls
 {
 	public class AsyncImage : UserControl
 	{
-		private readonly ConcurrentDictionary<Uri, BitmapImage> ImageCache = new ConcurrentDictionary<Uri, BitmapImage>();
+		private static readonly ConcurrentDictionary<Uri, BitmapImage> ImageCache = new ConcurrentDictionary<Uri, BitmapImage>();
+
+		private readonly ILogger _logger;
+
+		public AsyncImage()
+		{
+			_logger = new Logger();
+		}
 
 		public Uri UriSource
 		{
@@ -34,16 +43,16 @@ namespace LoopingMediaGallery.Controls
 		private static DependencyPropertyKey SourcePropertyKey =
 			DependencyProperty.RegisterReadOnly("Source", typeof(ImageSource), typeof(AsyncImage), null);
 
-		private async Task UpdateSource()
+		private Task UpdateSource()
 		{
 			var height = (int)Height;
 			var width = (int)Width;
 			var uriSource = UriSource;
-
-			await Task.Run(() =>
-			{
+			return Task.Run(() =>
+			{ 
 				return ImageCache.GetOrAdd(uriSource, (uri) =>
 				{
+					_logger.Write(string.Format("{0} - Building image with URI {1}", this.GetType().Name, uri));
 					var image = new BitmapImage();
 					image.BeginInit();
 					if (height > 0)
@@ -55,13 +64,19 @@ namespace LoopingMediaGallery.Controls
 					image.EndInit();
 					if (image.CanFreeze)
 						image.Freeze();
+					_logger.Write(string.Format("{0} - Finished building image with URI {1}", this.GetType().Name, uri));
+
 					return image;
 				});
 			}).ContinueWith((task) =>
 			{
 				if (task.Exception == null && task.Result != null)
-					Dispatcher.Invoke(() => Source = task.Result as BitmapImage, System.Windows.Threading.DispatcherPriority.Render);
-			});
+				{
+					_logger.Write(string.Format("{0} - Assigning asyncimage with uri {1}", this.GetType().Name, uriSource));
+
+					Source = task.Result as BitmapImage;
+				}
+			}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 	}
 }

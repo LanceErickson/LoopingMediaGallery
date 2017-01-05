@@ -34,7 +34,7 @@ namespace LoopingMediaGallery.Objects
 				if (currentIndex + 1 < mediaCollection.Count)
 					CurrentMedia = mediaCollection[currentIndex + 1];
 				else
-					CurrentMedia = mediaCollection.First();
+					CurrentMedia = mediaCollection.FirstOrDefault();
 			}
 			else
 			{

@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="LoopingMediaGallery"
         xmlns:qc="http://QuickConverter.CodePlex.com/"
-        Height="400" Width="525">
+        Height="400" Width="525" Icon="favicon.ico">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -62,7 +62,7 @@
         <Button Grid.Row="8" Grid.Column="1" Content="Reset" Click="{qc:QuickEvent '$dataContext.ResetHandler()'}" />
         <Button Grid.Row="8" Grid.Column="2" Content="Previous" Click="{qc:QuickEvent '$dataContext.PreviousHandler()'}" />
         <Button Grid.Row="8" Grid.Column="3" Content="Next" Click="{qc:QuickEvent '$dataContext.NextHandler()'}" />
-        <Button Grid.Row="8" Grid.Column="4" Content="Blank" Click="{qc:QuickEvent '$dataContext.BlankHandler()'}" />
+        <ToggleButton Grid.Row="8" Grid.Column="4" Content="{Binding Blank, Converter={qc:QuickConverter '$P == false ? \'Blank\' : \'Show\''}}" IsChecked="{Binding Blank, UpdateSourceTrigger=PropertyChanged}"/>
         <Button Grid.Row="8" Grid.Column="5" Content="Present" Click="{qc:QuickEvent '$dataContext.PresentHandler()'}" />
         <Button Grid.Row="0" Grid.Column="5" Content="Settings" Opacity=".25" Click="{qc:QuickEvent '$dataContext.SettingsHandler()'}" />
         <ToggleButton Grid.Row="6" Grid.Column="5" Opacity=".25" Content="{Binding Mute, Converter={qc:QuickConverter '$P == false ? \'Mute\' : \'Unmute\''}}" IsChecked="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" />
@@ -75,8 +75,7 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderThickness="2" BorderBrush="{qc:MultiBinding P0={Binding Path=DataContext.CurrentMedia, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListBox}}, P1={Binding .}, ExternalConverter={qc:QuickMultiConverter '$P0 != null ? $P0.Equals($P1) ? $V0 : $V1 : $V1', V0={x:Static Brushes.Red}, V1={x:Static Brushes.White}}}" Padding="1" Cursor="Hand" MouseDown="{qc:QuickEvent '$P0.SelectMedia($dataContext)'}">
-                        <!--<Image Source="{qc:MultiBinding P1={Binding Source}, P2={Binding Type}, ExternalConverter={x:Static converters:UriToBitmapImageConverter.Instance}, ConverterParameter=32}" Height="32" Width="32"/>-->
+                    <Border VerticalAlignment="Center" BorderThickness="2" BorderBrush="{qc:MultiBinding P0={Binding Path=DataContext.CurrentMedia, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListBox}}, P1={Binding .}, ExternalConverter={qc:QuickMultiConverter '$P0 != null ? $P0.Equals($P1) ? $V0 : $V1 : $V1', V0={x:Static Brushes.Red}, V1={x:Static Brushes.White}}}" Padding="1" Cursor="Hand" MouseDown="{qc:QuickEvent '$P0.SelectMedia($dataContext)'}">
                         <controls:AsyncImage Height="50" Width="50" UriSource="{qc:MultiBinding P1={Binding Source}, P2={Binding Type}, ExternalConverter={x:Static converters:UriToUriConverter.Instance}}" />
                     </Border>
                 </DataTemplate>

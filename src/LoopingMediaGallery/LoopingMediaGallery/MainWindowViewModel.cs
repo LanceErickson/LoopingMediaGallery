@@ -184,8 +184,6 @@ namespace LoopingMediaGallery
 				_mediaTimer.Start();
 		}
 
-		public void BlankHandler() => Blank = !Blank;
-
 		public void SelectMedia(IMediaObject media)
 		{
 			int index = MediaCollection.IndexOf(media);

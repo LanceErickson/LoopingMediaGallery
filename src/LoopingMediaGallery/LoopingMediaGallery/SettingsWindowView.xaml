@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:LoopingMediaGallery"
         xmlns:qc="http://QuickConverter.CodePlex.com/"
         mc:Ignorable="d"
-        Title="Settings" Height="160" Width="450" ResizeMode="NoResize">
+        Title="Settings" Height="160" Width="450" ResizeMode="NoResize" Icon="favicon.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

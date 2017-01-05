@@ -53,6 +53,9 @@
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MediaInfoDotNet, Version=0.7.79.40925, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MediaInfoDotNet.0.7.79.40925\lib\net45\MediaInfoDotNet.dll</HintPath>
@@ -152,8 +155,10 @@
     <Compile Include="Converters\UriToBitmapImageConverter.cs" />
     <Compile Include="Interfaces\IGetViewPreview.cs" />
     <Compile Include="Interfaces\IIntervalTimer.cs" />
+    <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Interfaces\ISaveSettings.cs" />
     <Compile Include="Objects\IntervalTimer.cs" />
+    <Compile Include="Objects\Logger.cs" />
     <Compile Include="Objects\PreviewImageProvider.cs" />
     <Compile Include="Objects\SettingsSaver.cs" />
     <Compile Include="PresentationView.xaml.cs">
@@ -260,6 +265,7 @@
     <Resource Include="Resources\videoThumb.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="favicon.ico" />
     <Content Include="x64\MediaInfo.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

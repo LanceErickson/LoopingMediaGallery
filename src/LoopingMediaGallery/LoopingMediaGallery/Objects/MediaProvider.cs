@@ -10,14 +10,17 @@ namespace LoopingMediaGallery.Objects
 	{
 		private readonly ISettingsProvider _settingsProvider;
 		private readonly IIntervalTimer _intervalTimer;
+		private readonly ILogger _logger;
 	
-		public MediaProvider(ISettingsProvider settingsProvider, IIntervalTimer intervalTimer)
+		public MediaProvider(ISettingsProvider settingsProvider, IIntervalTimer intervalTimer, ILogger logger)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
 			if (intervalTimer == null) throw new ArgumentNullException(nameof(intervalTimer));
+			if (logger == null) throw new ArgumentNullException(nameof(logger));
 
 			_settingsProvider = settingsProvider;
 			_intervalTimer = intervalTimer;
+			_logger = logger;
 
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
@@ -50,7 +53,7 @@ namespace LoopingMediaGallery.Objects
 
 		private void ScanFolderPath()
 		{
-			Console.WriteLine("MediaProvider - Starting to scan folder path.");
+			_logger.Write(string.Format("{0} - Starting to scan folder path.", this.GetType().Name));
 
 			var currentCollectionDictionary = new Dictionary<string, IMediaObject>();
 			foreach (var item in MediaObjectCollection)
@@ -84,15 +87,18 @@ namespace LoopingMediaGallery.Objects
 					}
 				}
 
-				if (MediaObjectCollection.Count == 0 && mediaCollection.Count > 0)
-					MediaCollectionPopulated?.Invoke(this, new EventArgs());
-
-				if (!MediaObjectCollection.SetEquals(mediaCollection))
-					MediaCollectionChanged?.Invoke(this, new EventArgs());
-
+				bool mediaCollectionPopulated = MediaObjectCollection.Count == 0 && mediaCollection.Count > 0;
+				bool mediaCollectionChanged = !MediaObjectCollection.SetEquals(mediaCollection);
+					
 				MediaObjectCollection = mediaCollection;
 
-				Console.WriteLine("MediaProvider - Finished scanning folder path.");
+				if (mediaCollectionPopulated)
+					MediaCollectionPopulated?.Invoke(this, new EventArgs());
+
+				if (mediaCollectionChanged)
+					MediaCollectionChanged?.Invoke(this, new EventArgs());
+
+				_logger.Write(string.Format("{0} - Finished scanning folder path.", this.GetType().Name));
 			}
 		}
 
