@@ -65,6 +65,7 @@ namespace LoopingMediaGallery
 			var dlg = new CommonOpenFileDialog();
 			dlg.Title = "Select a path to monitor";
 			dlg.IsFolderPicker = true;
+			dlg.DefaultDirectory = FolderPath;
 
 			dlg.AddToMostRecentlyUsedList = false;
 			dlg.AllowNonFileSystemItems = false;

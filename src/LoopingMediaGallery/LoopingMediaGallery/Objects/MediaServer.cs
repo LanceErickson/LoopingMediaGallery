@@ -21,6 +21,12 @@ namespace LoopingMediaGallery.Objects
 			{
 				CurrentMedia = _mediaProvider.MediaObjectCollection.FirstOrDefault();
 			};
+
+			_mediaProvider.MediaCollectionChanged += (s, o) =>
+			{
+				if (!_mediaProvider.MediaObjectCollection.Any())
+					CurrentMedia = null;
+			};
 		}
 
 		public IMediaObject CurrentMedia { get; private set; }

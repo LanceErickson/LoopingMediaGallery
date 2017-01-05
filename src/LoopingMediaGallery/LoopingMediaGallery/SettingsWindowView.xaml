@@ -7,8 +7,16 @@
         xmlns:local="clr-namespace:LoopingMediaGallery"
         xmlns:qc="http://QuickConverter.CodePlex.com/"
         mc:Ignorable="d"
-        Title="Settings" Height="160" Width="450" ResizeMode="NoResize" Icon="favicon.ico">
+        Title="Settings" Height="160" Width="450" ResizeMode="NoResize" Icon="favicon.ico" Topmost="True">
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="CheckBox">
+                <Setter Property="Cursor" Value="Hand" />
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="Cursor" Value="Hand" />
+            </Style>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
