@@ -8,6 +8,8 @@ namespace LoopingMediaGallery.Objects
 	{
 		private IMediaProvider _mediaProvider;
 
+		public event EventHandler CurrentMediaUpdated;
+
 		public MediaServer(IMediaProvider mediaProvider)
 		{
 			if (mediaProvider == null) throw new ArgumentNullException(nameof(mediaProvider));
@@ -15,17 +17,24 @@ namespace LoopingMediaGallery.Objects
 			_mediaProvider = mediaProvider;
 
 			if (_mediaProvider.MediaObjectCollection.Any())
+			{
 				CurrentMedia = _mediaProvider.MediaObjectCollection.FirstOrDefault();
+				CurrentMediaUpdated?.Invoke(this, new EventArgs());
+			}
 
 			_mediaProvider.MediaCollectionPopulated += (s, o) =>
 			{
 				CurrentMedia = _mediaProvider.MediaObjectCollection.FirstOrDefault();
+				CurrentMediaUpdated?.Invoke(this, new EventArgs());
 			};
 
 			_mediaProvider.MediaCollectionChanged += (s, o) =>
 			{
-				if (!_mediaProvider.MediaObjectCollection.Any())
-					CurrentMedia = null;
+				if (!_mediaProvider.MediaObjectCollection.Contains(CurrentMedia))
+				{
+					CurrentMedia = _mediaProvider.MediaObjectCollection.FirstOrDefault();
+					CurrentMediaUpdated?.Invoke(this, new EventArgs());
+				}
 			};
 		}
 

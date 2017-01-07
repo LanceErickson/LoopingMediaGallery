@@ -108,7 +108,11 @@ namespace LoopingMediaGallery.Controls
 		
 		private void Update()
 		{
-			if (Source == null) return;
+			if (Source == null)
+			{
+				ToggleElementVisibility(_currentElement, false);
+				return;
+			}
 
 			if (Source.Type == MediaType.Image)
 				SetupImage(Source);

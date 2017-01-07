@@ -133,6 +133,9 @@ namespace LoopingMediaGallery
 			_mediaProvider.MediaCollectionChanged += (s, o) =>
 				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged(nameof(MediaCollection))));
 
+			_mediaServer.CurrentMediaUpdated += (s, o) =>
+				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged(nameof(CurrentMedia))));
+
 			_mediaProvider.ForceUpdate();
 			SendPropertyChanged(nameof(_settingsProvider.ShowPreview));
 

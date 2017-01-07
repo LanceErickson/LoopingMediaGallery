@@ -1,4 +1,6 @@
-﻿namespace LoopingMediaGallery.Interfaces
+﻿using System;
+
+namespace LoopingMediaGallery.Interfaces
 {
 	public interface IServeMedia
 	{
@@ -11,5 +13,7 @@
 		void Reset();
 
 		void ServeSpecific(int index);
+
+		event EventHandler CurrentMediaUpdated;
 	}
 }
