@@ -189,13 +189,16 @@ namespace LoopingMediaGallery
 
 		public void SelectMedia(IMediaObject media)
 		{
-			int index = MediaCollection.IndexOf(media);
+			int index = MediaCollection.IndexOf((IMediaObject)media);
 			_mediaServer.ServeSpecific(index);
 			SendPropertyChanged(nameof(CurrentMedia));
 			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
 			if (Play)
 				_mediaTimer.Start();
 		}
+
+		public void ItemSelected(System.Windows.Controls.ListBox sender)
+			=> sender.ScrollIntoView(sender.SelectedItem);
 
 		public void PresentHandler()
 		{
@@ -232,6 +235,11 @@ namespace LoopingMediaGallery
 		{
 			var settingsWindow = new SettingsWindowView(new SettingsWindowViewModel(_settingsProvider, _settingsSaver));
 			settingsWindow.ShowDialog();
+		}
+
+		public void ItemSelected(object sender, EventArgs args)
+		{
+
 		}
 	}
 }

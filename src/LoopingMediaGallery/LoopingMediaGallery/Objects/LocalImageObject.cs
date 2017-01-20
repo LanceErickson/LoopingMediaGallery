@@ -33,7 +33,13 @@ namespace LoopingMediaGallery.Objects
 			return 1;
 		}
 
+		public bool Equals(IMediaObject other)
+			=> CompareTo(other) == 1;
+
 		public override bool Equals(object obj)
 			=> obj is IMediaObject ? CompareTo((IMediaObject)obj) == 1 : false;
+
+		public override int GetHashCode()
+			=> Source.GetHashCode();
 	}
 }

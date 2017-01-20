@@ -67,7 +67,7 @@
         <Button Grid.Row="0" Grid.Column="5" Content="Settings" Opacity=".25" Click="{qc:QuickEvent '$dataContext.SettingsHandler()'}" />
         <ToggleButton Grid.Row="6" Grid.Column="5" Opacity=".25" Content="{Binding Mute, Converter={qc:QuickConverter '$P == false ? \'Mute\' : \'Unmute\''}}" IsChecked="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" />
 
-        <ListBox Grid.Row="7" Grid.ColumnSpan="6" Background="Black" qc:QuickEvent.P0="{Binding .}" ItemsSource="{Binding MediaCollection, UpdateSourceTrigger=PropertyChanged}">
+        <ListBox Grid.Row="7" Grid.ColumnSpan="6" Background="Black" qc:QuickEvent.P0="{Binding .}" SelectedItem="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" ItemsSource="{Binding MediaCollection, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="{qc:QuickEvent '$dataContext.ItemSelected($sender)'}" >
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" />
@@ -75,8 +75,10 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border VerticalAlignment="Center" BorderThickness="2" BorderBrush="{qc:MultiBinding P0={Binding Path=DataContext.CurrentMedia, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListBox}}, P1={Binding .}, ExternalConverter={qc:QuickMultiConverter '$P0 != null ? $P0.Equals($P1) ? $V0 : $V1 : $V1', V0={x:Static Brushes.Red}, V1={x:Static Brushes.White}}}" Padding="1" Cursor="Hand" MouseDown="{qc:QuickEvent '$P0.SelectMedia($dataContext)'}">
-                        <controls:AsyncImage Height="50" Width="50" UriSource="{qc:MultiBinding P1={Binding Source}, P2={Binding Type}, ExternalConverter={x:Static converters:UriToUriConverter.Instance}}" />
+                    <Border Background="Black" Cursor="Hand" MouseDown="{qc:QuickEvent '$P0.SelectMedia($dataContext)'}">
+                        <Border VerticalAlignment="Center" BorderThickness="2" BorderBrush="{qc:MultiBinding P0={Binding Path=DataContext.CurrentMedia, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListBox}}, P1={Binding .}, ExternalConverter={qc:QuickMultiConverter '$P0 != null ? $P0.Equals($P1) ? $V0 : $V1 : $V1', V0={x:Static Brushes.Red}, V1={x:Static Brushes.White}}}" Padding="1">
+                            <controls:AsyncImage Height="50" Width="50" UriSource="{qc:MultiBinding P1={Binding Source}, P2={Binding Type}, ExternalConverter={x:Static converters:UriToUriConverter.Instance}}" />
+                        </Border>
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
