@@ -1,12 +1,6 @@
 ﻿using LoopingMediaGallery.Interfaces;
 using LoopingMediaGallery.Objects;
 using Microsoft.Practices.Unity;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace LoopingMediaGallery
@@ -36,7 +30,8 @@ namespace LoopingMediaGallery
 			_container.RegisterType<IIntervalTimer, IntervalTimer>();
 			_container.RegisterType<IGetViewPreview, PreviewImageProvider>();
 			_container.RegisterType<ILogger, Logger>();
-
+			_container.RegisterType<IPresentOnSecondScreenHandler, PresentViewOnSecondScreenHandler>();
+	
 			MainWindow mainWindow = _container.Resolve<MainWindow>();
 			mainWindow.Show();
 		}

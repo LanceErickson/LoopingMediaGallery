@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows.Media.Imaging;
 
 namespace LoopingMediaGallery
@@ -16,6 +15,7 @@ namespace LoopingMediaGallery
 		private readonly IIntervalTimer _mediaTimer;
 		private readonly IIntervalTimer _previewTimer;
 		private readonly IGetViewPreview _viewPreviewProvider;
+		private readonly IPresentOnSecondScreenHandler _presentViewHandler;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public void SendPropertyChanged(string propertyName)
@@ -98,7 +98,17 @@ namespace LoopingMediaGallery
 			}
 		}
 
-		public MainWindowViewModel(ISettingsProvider settingsProvider, IServeMedia mediaServer, IMediaProvider mediaProvider, ISaveSettings settingsSaver, IIntervalTimer mediaTimer, IIntervalTimer previewTimer, IGetViewPreview viewPreviewProvider)
+		public SettingsWindowView SettingsView { get; }
+
+		public MainWindowViewModel(
+									ISettingsProvider settingsProvider, 
+									IServeMedia mediaServer, 
+									IMediaProvider mediaProvider, 
+									ISaveSettings settingsSaver, 
+									IIntervalTimer mediaTimer, 
+									IIntervalTimer previewTimer, 
+									IGetViewPreview viewPreviewProvider,
+									IPresentOnSecondScreenHandler presentViewHandler)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
 			if (mediaServer == null) throw new ArgumentNullException(nameof(mediaServer));
@@ -107,6 +117,7 @@ namespace LoopingMediaGallery
 			if (mediaTimer == null) throw new ArgumentNullException(nameof(mediaTimer));
 			if (previewTimer == null) throw new ArgumentNullException(nameof(previewTimer));
 			if (viewPreviewProvider == null) throw new ArgumentNullException(nameof(viewPreviewProvider));
+			if (presentViewHandler == null) throw new ArgumentNullException(nameof(presentViewHandler));
 
 			_settingsProvider = settingsProvider;
 			_mediaServer = mediaServer;
@@ -115,6 +126,7 @@ namespace LoopingMediaGallery
 			_mediaTimer = mediaTimer;
 			_previewTimer = previewTimer;
 			_viewPreviewProvider = viewPreviewProvider;
+			_presentViewHandler = presentViewHandler;
 			
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
@@ -201,30 +213,11 @@ namespace LoopingMediaGallery
 			=> sender.ScrollIntoView(sender.SelectedItem);
 
 		public void PresentHandler()
-		{
-			if (_presentationView == null) return;
-
-			var screens = new List<System.Windows.Forms.Screen>(System.Windows.Forms.Screen.AllScreens);
-
-			System.Windows.Forms.Screen screen;
-			if (screens.Count > 1)
-				screen = screens[1];
-			else
-				screen = screens[0];
-
-			System.Drawing.Rectangle r2 = screen.WorkingArea;
-			_presentationView.Top = r2.Top;
-			_presentationView.Left = r2.Left;
-
-			_presentationView.WindowStyle = System.Windows.WindowStyle.None;
-			_presentationView.WindowState = System.Windows.WindowState.Maximized;
-		}
+			=> _presentViewHandler.PresentationView(_presentationView);
 
 		internal void AddPresentationView(PresentationView presentationView)
-		{
-			_presentationView = presentationView;
-		}
-
+			=> _presentationView = presentationView;
+		
 		internal void ClosePresentationView()
 		{
 			if (_presentationView != null)
@@ -235,11 +228,6 @@ namespace LoopingMediaGallery
 		{
 			var settingsWindow = new SettingsWindowView(new SettingsWindowViewModel(_settingsProvider, _settingsSaver));
 			settingsWindow.ShowDialog();
-		}
-
-		public void ItemSelected(object sender, EventArgs args)
-		{
-
 		}
 	}
 }
