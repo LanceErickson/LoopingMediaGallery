@@ -1,4 +1,5 @@
-﻿using LoopingMediaGallery.Interfaces;
+﻿using LoopingMediaGallery.Controllers;
+using LoopingMediaGallery.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,46 +10,27 @@ namespace LoopingMediaGallery
 	public class MainWindowViewModel : INotifyPropertyChanged
 	{
 		private readonly ISettingsProvider _settingsProvider;
-		private readonly IServeMedia _mediaServer;
-		private readonly IMediaProvider _mediaProvider;
 		private readonly ISaveSettings _settingsSaver;
-		private readonly IIntervalTimer _mediaTimer;
 		private readonly IIntervalTimer _previewTimer;
 		private readonly IGetViewPreview _viewPreviewProvider;
 		private readonly IPresentOnSecondScreenHandler _presentViewHandler;
+
+		private readonly MediaController _mediaController;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public void SendPropertyChanged(string propertyName)
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-		public IMediaObject CurrentMedia => _mediaServer?.CurrentMedia;
+		public IMediaObject CurrentMedia => _mediaController.CurrentMedia;
 
-		public IList<IMediaObject> MediaCollection => new List<IMediaObject>(_mediaProvider.MediaObjectCollection);
+		public IEnumerable<IMediaObject> MediaCollection => _mediaController.MediaCollection;
 
-		private bool _play = false;
 		public bool Play
 		{
-			get { return _play; }
+			get { return _mediaController.Play; }
 			set
 			{
-				if (CurrentMedia == null)
-					return;
-
-				if (_play == value)
-					return;
-
-				if (value)
-				{
-					SendPropertyChanged(nameof(CurrentMedia));
-					_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
-					_mediaTimer.Start();
-				}
-				else
-				{
-					_mediaTimer.Stop();
-				}
-
-				_play = value;
+				_mediaController.Play = value;
 				SendPropertyChanged(nameof(Play));
 			}
 		}
@@ -102,31 +84,25 @@ namespace LoopingMediaGallery
 
 		public MainWindowViewModel(
 									ISettingsProvider settingsProvider, 
-									IServeMedia mediaServer, 
-									IMediaProvider mediaProvider, 
 									ISaveSettings settingsSaver, 
-									IIntervalTimer mediaTimer, 
 									IIntervalTimer previewTimer, 
 									IGetViewPreview viewPreviewProvider,
-									IPresentOnSecondScreenHandler presentViewHandler)
+									IPresentOnSecondScreenHandler presentViewHandler,
+									MediaController mediaController)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
-			if (mediaServer == null) throw new ArgumentNullException(nameof(mediaServer));
-			if (mediaProvider == null) throw new ArgumentNullException(nameof(mediaProvider));
 			if (settingsSaver == null) throw new ArgumentNullException(nameof(settingsSaver));
-			if (mediaTimer == null) throw new ArgumentNullException(nameof(mediaTimer));
 			if (previewTimer == null) throw new ArgumentNullException(nameof(previewTimer));
 			if (viewPreviewProvider == null) throw new ArgumentNullException(nameof(viewPreviewProvider));
 			if (presentViewHandler == null) throw new ArgumentNullException(nameof(presentViewHandler));
+			if (mediaController == null) throw new ArgumentNullException(nameof(mediaController));
 
 			_settingsProvider = settingsProvider;
-			_mediaServer = mediaServer;
-			_mediaProvider = mediaProvider;
 			_settingsSaver = settingsSaver;
-			_mediaTimer = mediaTimer;
 			_previewTimer = previewTimer;
 			_viewPreviewProvider = viewPreviewProvider;
 			_presentViewHandler = presentViewHandler;
+			_mediaController = mediaController;
 			
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
@@ -139,16 +115,9 @@ namespace LoopingMediaGallery
 				}
 			};
 
-			_mediaProvider.MediaCollectionPopulated += (s, o) =>
-				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged(nameof(CurrentMedia))));
+			_mediaController.PropertyChanged += (s, o) =>
+				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged((o as PropertyChangedEventArgs).PropertyName)));	
 
-			_mediaProvider.MediaCollectionChanged += (s, o) =>
-				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged(nameof(MediaCollection))));
-
-			_mediaServer.CurrentMediaUpdated += (s, o) =>
-				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged(nameof(CurrentMedia))));
-
-			_mediaProvider.ForceUpdate();
 			SendPropertyChanged(nameof(_settingsProvider.ShowPreview));
 
 			_previewTimer.Initialize(TimeSpan.FromSeconds(1), () => UpdatePreview());
@@ -166,57 +135,17 @@ namespace LoopingMediaGallery
 			}
 		}
 
-		public void MediaHasEnded()
-		{
-			SendPropertyChanged(nameof(_settingsProvider.ShowPreview));
-			NextHandler();
-		}
+		public void MediaHasEnded() => _mediaController.NextHandler();
+		public void ResetHandler() => _mediaController.ResetHandler();
+		public void NextHandler() => _mediaController.NextHandler();
+		public void PreviousHandler() => _mediaController.PreviousHandler();
+		public void SelectMedia(IMediaObject media) => _mediaController.SelectMedia(media);
 
-		public void ResetHandler()
-		{
-			_mediaServer.Reset();
-			SendPropertyChanged(nameof(CurrentMedia));
-			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
-			if (Play)
-				_mediaTimer.Start();
-		}
+		public void ItemSelected(System.Windows.Controls.ListBox sender) => sender.ScrollIntoView(sender.SelectedItem);
 
-		public void NextHandler()
-		{
-			_mediaServer.NextMedia();
-			SendPropertyChanged(nameof(CurrentMedia));
-			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
-			if (Play)
-				_mediaTimer.Start();
-		}
+		public void PresentHandler() => _presentViewHandler.PresentationView(_presentationView);
 
-		public void PreviousHandler()
-		{
-			_mediaServer.PreviousMedia();
-			SendPropertyChanged(nameof(CurrentMedia));
-			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
-			if(Play)
-				_mediaTimer.Start();
-		}
-
-		public void SelectMedia(IMediaObject media)
-		{
-			int index = MediaCollection.IndexOf((IMediaObject)media);
-			_mediaServer.ServeSpecific(index);
-			SendPropertyChanged(nameof(CurrentMedia));
-			_mediaTimer.Initialize(CurrentMedia.Duration, () => MediaHasEnded());
-			if (Play)
-				_mediaTimer.Start();
-		}
-
-		public void ItemSelected(System.Windows.Controls.ListBox sender)
-			=> sender.ScrollIntoView(sender.SelectedItem);
-
-		public void PresentHandler()
-			=> _presentViewHandler.PresentationView(_presentationView);
-
-		internal void AddPresentationView(PresentationView presentationView)
-			=> _presentationView = presentationView;
+		internal void AddPresentationView(PresentationView presentationView) => _presentationView = presentationView;
 		
 		internal void ClosePresentationView()
 		{

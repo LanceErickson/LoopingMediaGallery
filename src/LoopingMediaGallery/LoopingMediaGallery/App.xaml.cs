@@ -2,6 +2,8 @@
 using LoopingMediaGallery.Objects;
 using Microsoft.Practices.Unity;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace LoopingMediaGallery
 {
@@ -17,7 +19,10 @@ namespace LoopingMediaGallery
 			QuickConverter.EquationTokenizer.AddNamespace(typeof(object));
 			// Add the System.Windows namespace so we can use Visibility.Collapsed, etc.
 			QuickConverter.EquationTokenizer.AddNamespace(typeof(Visibility));
+
+			Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata { DefaultValue = 30 });
 		}
+
 		private IUnityContainer _container;
 
 		protected override void OnStartup(StartupEventArgs e)
@@ -25,7 +30,7 @@ namespace LoopingMediaGallery
 			_container = new UnityContainer();
 			_container.RegisterType<IServeMedia, MediaServer>();
 			_container.RegisterType<IMediaProvider, MediaProvider>(new ContainerControlledLifetimeManager());
-			_container.RegisterType<ISettingsProvider, Objects.SettingsProvider>();
+			_container.RegisterType<ISettingsProvider, SettingsProvider>();
 			_container.RegisterType<ISaveSettings, SettingsSaver>();
 			_container.RegisterType<IIntervalTimer, IntervalTimer>();
 			_container.RegisterType<IGetViewPreview, PreviewImageProvider>();

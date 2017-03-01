@@ -38,7 +38,19 @@ namespace LoopingMediaGallery.Objects
 			};
 		}
 
-		public IMediaObject CurrentMedia { get; private set; }
+		private IMediaObject _currentMedia;
+		public IMediaObject CurrentMedia
+		{
+			get
+			{
+				return _currentMedia;
+			}
+			private set
+			{
+				_currentMedia = value;
+				CurrentMediaUpdated?.Invoke(this, new EventArgs());
+			}
+		}
 
 		public void NextMedia()
 		{

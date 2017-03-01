@@ -8,9 +8,9 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Canvas Background="Black"/>
-        <MediaElement x:Name="videoOne" LoadedBehavior="Manual" Opacity="0" />
-        <MediaElement x:Name="videoTwo" LoadedBehavior="Manual" Opacity="0" />
-        <Image x:Name="imageOne" Opacity="0" />
-        <Image x:Name="imageTwo" Opacity="0" />
+        <MediaElement x:Name="videoOne" LoadedBehavior="Manual" Opacity="0" Visibility="Hidden" />
+        <MediaElement x:Name="videoTwo" LoadedBehavior="Manual" Opacity="0" Visibility="Hidden" />
+        <Image x:Name="imageOne" Opacity="0" Visibility="Hidden"/>
+        <Image x:Name="imageTwo" Opacity="0" Visibility="Hidden" />
     </Grid>
 </UserControl>

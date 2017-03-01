@@ -67,7 +67,7 @@
         <Button Grid.Row="0" Grid.Column="5" Content="Settings" Opacity=".25" Click="{qc:QuickEvent '$dataContext.SettingsHandler()'}" />
         <ToggleButton Grid.Row="6" Grid.Column="5" Opacity=".25" Content="{Binding Mute, Converter={qc:QuickConverter '$P == false ? \'Mute\' : \'Unmute\''}}" IsChecked="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" />
 
-        <ListBox Grid.Row="7" Grid.ColumnSpan="6" Background="Black" qc:QuickEvent.P0="{Binding .}" SelectedItem="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" ItemsSource="{Binding MediaCollection, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="{qc:QuickEvent '$dataContext.ItemSelected($sender)'}" >
+        <ListBox Grid.Row="7" Grid.ColumnSpan="6" Background="Black" qc:QuickEvent.P0="{Binding .}" SelectedItem="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" ItemsSource="{Binding MediaCollection, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="{qc:QuickEvent '$dataContext.ItemSelected($sender)'}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Recycling">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" />

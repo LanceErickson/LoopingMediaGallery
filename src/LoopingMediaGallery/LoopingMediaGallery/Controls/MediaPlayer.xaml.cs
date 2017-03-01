@@ -1,6 +1,6 @@
 ﻿using LoopingMediaGallery.Interfaces;
 using System;
-using System.Threading;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -18,6 +18,22 @@ namespace LoopingMediaGallery.Controls
 			InitializeComponent();
 
 			MuteAudio();
+
+			_fadeOut.Completed += (s,e) =>
+			{
+				if (Blank) return;
+				foreach (var element in new List<UIElement>() { videoOne, videoTwo, imageOne, imageTwo})
+				{
+					if (element.Opacity == 0 && element.Visibility != Visibility.Hidden)
+					{
+						element.Visibility = Visibility.Hidden;
+						if (element is MediaElement)
+							(element as MediaElement).Source = null;
+						if (element is Image)
+							(element as Image).Source = null;
+					}
+				}
+			};
 		}
 
 		private UIElement _currentElement;
@@ -126,7 +142,9 @@ namespace LoopingMediaGallery.Controls
 		{
 			(_currentElement as MediaElement)?.Stop();
 			
-			SwitchElementsVisibility(_currentElement, _queuedElement);
+			if (!Blank)
+				SwitchElementsVisibility(_currentElement, _queuedElement);
+
 			if (Play)
 			{
 				(_queuedElement as MediaElement)?.Play();
@@ -164,11 +182,16 @@ namespace LoopingMediaGallery.Controls
 
 		private void SwitchElementsVisibility(UIElement currentElement, UIElement queuedElement)
 		{
+			_queuedElement.Visibility = Visibility.Visible; 
 			queuedElement?.BeginAnimation(UIElement.OpacityProperty, UseFade ? _fadeIn : _cutIn, HandoffBehavior.Compose);
 			currentElement?.BeginAnimation(UIElement.OpacityProperty, UseFade ? _fadeOut : _cutOut, HandoffBehavior.Compose);
 		}
 
 		private void ToggleElementVisibility(UIElement element, bool visible)
-			=> element.BeginAnimation(UIElement.OpacityProperty, UseFade ? (visible ? _fadeIn : _fadeOut) : (visible ? _cutIn : _cutOut), HandoffBehavior.Compose);
+		{
+			if (visible)
+				element.Visibility = Visibility.Visible;
+			element.BeginAnimation(UIElement.OpacityProperty, UseFade ? (visible ? _fadeIn : _fadeOut) : (visible ? _cutIn : _cutOut), HandoffBehavior.Compose);
+		}
 	}
 }
