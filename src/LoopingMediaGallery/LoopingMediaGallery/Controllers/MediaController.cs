@@ -106,9 +106,6 @@ namespace LoopingMediaGallery.Controllers
 			if (Play)
 				_mediaTimer.Start();
 		}
-
-		public void ItemSelected(System.Windows.Controls.ListBox sender)
-			=> sender.ScrollIntoView(sender.SelectedItem);
 	}
 }
 
