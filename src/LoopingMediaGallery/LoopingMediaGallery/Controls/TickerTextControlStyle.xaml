@@ -1,0 +1,32 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:LoopingMediaGallery.Controls">
+    <Style TargetType="{x:Type local:TickerTextControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Viewbox VerticalAlignment="Stretch" ScrollViewer.CanContentScroll="false" StretchDirection="UpOnly" Stretch="UniformToFill">
+
+                        <!--<Canvas ClipToBounds="True">-->
+                        <ItemsControl Background="White" ScrollViewer.CanContentScroll="False" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel IsItemsHost="True"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="False">
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding}"/>
+                                        <TextBlock DockPanel.Dock="Right" Text=" * " />
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    <!--</Canvas>-->
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

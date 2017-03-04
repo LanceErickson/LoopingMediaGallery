@@ -15,8 +15,8 @@ namespace LoopingMediaGallery.Objects
 				return null;
 
 			Rect bounds = VisualTreeHelper.GetDescendantBounds(view);
-			RenderTargetBitmap rtb = new RenderTargetBitmap((int)bounds.Width,
-															(int)bounds.Height,
+			RenderTargetBitmap rtb = new RenderTargetBitmap((int)view.ActualWidth,
+															(int)view.ActualHeight,
 															96,
 															96,
 															PixelFormats.Pbgra32);
@@ -24,7 +24,7 @@ namespace LoopingMediaGallery.Objects
 			using (DrawingContext ctx = dv.RenderOpen())
 			{
 				VisualBrush vb = new VisualBrush(view);
-				ctx.DrawRectangle(vb, null, new Rect(new Point(), bounds.Size));
+				ctx.DrawRectangle(vb, null, new Rect(new Point(), view.RenderSize));
 			}
 			rtb.Render(dv);
 			return rtb;

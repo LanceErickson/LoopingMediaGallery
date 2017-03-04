@@ -10,7 +10,6 @@ namespace LoopingMediaGallery
 	{
 		public MainWindow(MainWindowViewModel viewModel)
 		{
-			//TODO: DI CONTAINER
 			this.DataContext = viewModel;
 
 			var presentationView = new PresentationView(viewModel);

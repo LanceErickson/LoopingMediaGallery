@@ -36,6 +36,7 @@ namespace LoopingMediaGallery
 			_container.RegisterType<IGetViewPreview, PreviewImageProvider>();
 			_container.RegisterType<ILogger, Logger>();
 			_container.RegisterType<IPresentOnSecondScreenHandler, PresentViewOnSecondScreenHandler>();
+			_container.RegisterType<ITickerTextProvider, TestTickerTextProvider>();
 	
 			MainWindow mainWindow = _container.Resolve<MainWindow>();
 			mainWindow.Show();

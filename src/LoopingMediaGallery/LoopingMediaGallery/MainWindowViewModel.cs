@@ -16,6 +16,7 @@ namespace LoopingMediaGallery
 		private readonly IPresentOnSecondScreenHandler _presentViewHandler;
 
 		private readonly MediaController _mediaController;
+		private readonly TickerController _tickerController;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public void SendPropertyChanged(string propertyName)
@@ -24,6 +25,8 @@ namespace LoopingMediaGallery
 		public IMediaObject CurrentMedia => _mediaController.CurrentMedia;
 
 		public IEnumerable<IMediaObject> MediaCollection => _mediaController.MediaCollection;
+
+		public IEnumerable<string> TextCollection => _tickerController.TextCollection;
 
 		public bool Play
 		{
@@ -88,7 +91,8 @@ namespace LoopingMediaGallery
 									IIntervalTimer previewTimer, 
 									IGetViewPreview viewPreviewProvider,
 									IPresentOnSecondScreenHandler presentViewHandler,
-									MediaController mediaController)
+									MediaController mediaController,
+									TickerController tickerController)
 		{
 			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
 			if (settingsSaver == null) throw new ArgumentNullException(nameof(settingsSaver));
@@ -96,6 +100,7 @@ namespace LoopingMediaGallery
 			if (viewPreviewProvider == null) throw new ArgumentNullException(nameof(viewPreviewProvider));
 			if (presentViewHandler == null) throw new ArgumentNullException(nameof(presentViewHandler));
 			if (mediaController == null) throw new ArgumentNullException(nameof(mediaController));
+			if (tickerController == null) throw new ArgumentNullException(nameof(tickerController));
 
 			_settingsProvider = settingsProvider;
 			_settingsSaver = settingsSaver;
@@ -103,6 +108,7 @@ namespace LoopingMediaGallery
 			_viewPreviewProvider = viewPreviewProvider;
 			_presentViewHandler = presentViewHandler;
 			_mediaController = mediaController;
+			_tickerController = tickerController;
 			
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
@@ -116,12 +122,16 @@ namespace LoopingMediaGallery
 			};
 
 			_mediaController.PropertyChanged += (s, o) =>
-				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged((o as PropertyChangedEventArgs).PropertyName)));	
+				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged((o as PropertyChangedEventArgs).PropertyName)));
 
+			_tickerController.PropertyChanged += (s, o) =>
+				App.Current.Dispatcher.BeginInvoke(new Action(() => SendPropertyChanged((o as PropertyChangedEventArgs).PropertyName)));
+		
 			SendPropertyChanged(nameof(_settingsProvider.ShowPreview));
 
 			_previewTimer.Initialize(TimeSpan.FromSeconds(1), () => UpdatePreview());
 			_previewTimer.Start();
+			_tickerController.Run = true;
 		}
 
 		private void UpdatePreview()

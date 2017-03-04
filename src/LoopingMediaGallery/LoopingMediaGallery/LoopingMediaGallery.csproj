@@ -161,10 +161,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controllers\MediaController.cs" />
+    <Compile Include="Controllers\TickerController.cs" />
     <Compile Include="Controls\AsyncImage.cs" />
     <Compile Include="Controls\MediaPlayer.xaml.cs">
       <DependentUpon>MediaPlayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TickerTextControl.cs" />
     <Compile Include="Converters\UriToUriConverter.cs" />
     <Compile Include="Converters\UriToBitmapImageConverter.cs" />
     <Compile Include="Interfaces\IGetViewPreview.cs" />
@@ -172,11 +174,14 @@
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Interfaces\IPresentOnSecondScreenHandler.cs" />
     <Compile Include="Interfaces\ISaveSettings.cs" />
+    <Compile Include="Interfaces\ITickerTextProvider.cs" />
     <Compile Include="Objects\IntervalTimer.cs" />
     <Compile Include="Objects\Logger.cs" />
     <Compile Include="Objects\PresentViewOnSecondScreenHandler.cs" />
     <Compile Include="Objects\PreviewImageProvider.cs" />
     <Compile Include="Objects\SettingsSaver.cs" />
+    <Compile Include="Objects\TextTickerTextProvider.cs" />
+    <Compile Include="Objects\TickerTextProvider.cs" />
     <Compile Include="PresentationView.xaml.cs">
       <DependentUpon>PresentationView.xaml</DependentUpon>
     </Compile>
@@ -184,6 +189,10 @@
       <DependentUpon>SettingsWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsWindowViewModel.cs" />
+    <Page Include="Controls\TickerTextControlStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\AsyncImageStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

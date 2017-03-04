@@ -10,7 +10,27 @@
         Title="" Height="300" Width="300" 
         MinHeight="30" MinWidth="30" WindowStyle="None"
         Background="Black" MouseDown="Window_MouseDown" Icon="favicon.ico">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Controls/TickerTextControlStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        <controls:MediaPlayer Grid.Row="0" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:MediaPlayer Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="3" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+        <controls:TickerTextControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" ItemsSource="{Binding TextCollection, UpdateSourceTrigger=PropertyChanged}" />
     </Grid>
 </Window>
