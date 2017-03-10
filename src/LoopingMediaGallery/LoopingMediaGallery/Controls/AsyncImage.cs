@@ -2,6 +2,7 @@
 using LoopingMediaGallery.Objects;
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,12 +44,16 @@ namespace LoopingMediaGallery.Controls
 		private static DependencyPropertyKey SourcePropertyKey =
 			DependencyProperty.RegisterReadOnly("Source", typeof(ImageSource), typeof(AsyncImage), null);
 
-		private Task UpdateSource()
+
+        private static readonly SemaphoreSlim _sempaphore = new SemaphoreSlim(1);
+		private async void UpdateSource()
 		{
+            await _sempaphore.WaitAsync();
+
 			var height = (int)Height;
 			var width = (int)Width;
 			var uriSource = UriSource;
-			return Task.Run(() =>
+			await Task.Run(() =>
 			{ 
 				return ImageCache.GetOrAdd(uriSource, (uri) =>
 				{
@@ -77,6 +82,8 @@ namespace LoopingMediaGallery.Controls
 					Source = task.Result as BitmapImage;
 				}
 			}, TaskScheduler.FromCurrentSynchronizationContext());
+
+            _sempaphore.Release();
 		}
 	}
 }
