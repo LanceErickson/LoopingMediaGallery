@@ -17,11 +17,8 @@ namespace LoopingMediaGallery
 
 		public SettingsWindowViewModel(ISettingsProvider settingsProvider, ISaveSettings settingsSaver)
 		{
-			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
-			if (settingsSaver == null) throw new ArgumentNullException(nameof(settingsSaver));
-
-			_settingsProvider = settingsProvider;
-			_settingsSaver = settingsSaver;
+            _settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
+			_settingsSaver = settingsSaver ?? throw new ArgumentNullException(nameof(settingsSaver));
  		}
 
 		public int RefreshRate

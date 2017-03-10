@@ -94,7 +94,30 @@ namespace LoopingMediaGallery
 			}
 		}
 
-		public SettingsWindowView SettingsView { get; }
+        public bool ShowTicker
+        {
+            get { return MediaPlayerRowSpan == 1; }
+            set
+            {
+                MediaPlayerRowSpan = value ? 1 : 2;
+                SendPropertyChanged(nameof(MediaPlayerRowSpan));
+            }
+        }
+
+        public bool ShowSidebar
+        {
+            get { return MediaPlayerColumnSpan == 1; }
+            set
+            {
+                MediaPlayerColumnSpan = value ? 1 : 2;
+                SendPropertyChanged(nameof(MediaPlayerColumnSpan));
+            }
+        }
+
+        public int MediaPlayerRowSpan { get; private set; }
+        public int MediaPlayerColumnSpan { get; private set; }
+        
+        public SettingsWindowView SettingsView { get; }
 
 		public MainWindowViewModel(
 									ISettingsProvider settingsProvider, 
@@ -105,21 +128,13 @@ namespace LoopingMediaGallery
 									MediaController mediaController,
 									TickerController tickerController)
 		{
-			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
-			if (settingsSaver == null) throw new ArgumentNullException(nameof(settingsSaver));
-			if (previewTimer == null) throw new ArgumentNullException(nameof(previewTimer));
-			if (viewPreviewProvider == null) throw new ArgumentNullException(nameof(viewPreviewProvider));
-			if (presentViewHandler == null) throw new ArgumentNullException(nameof(presentViewHandler));
-			if (mediaController == null) throw new ArgumentNullException(nameof(mediaController));
-			if (tickerController == null) throw new ArgumentNullException(nameof(tickerController));
-
-			_settingsProvider = settingsProvider;
-			_settingsSaver = settingsSaver;
-			_previewTimer = previewTimer;
-			_viewPreviewProvider = viewPreviewProvider;
-			_presentViewHandler = presentViewHandler;
-			_mediaController = mediaController;
-			_tickerController = tickerController;
+            _settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
+			_settingsSaver = settingsSaver ?? throw new ArgumentNullException(nameof(settingsSaver));
+			_previewTimer = previewTimer ?? throw new ArgumentNullException(nameof(previewTimer));
+			_viewPreviewProvider = viewPreviewProvider ?? throw new ArgumentNullException(nameof(viewPreviewProvider));
+			_presentViewHandler = presentViewHandler ?? throw new ArgumentNullException(nameof(presentViewHandler));
+			_mediaController = mediaController ?? throw new ArgumentNullException(nameof(mediaController));
+			_tickerController = tickerController ?? throw new ArgumentNullException(nameof(tickerController));
 			
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
@@ -142,6 +157,9 @@ namespace LoopingMediaGallery
 
 			_previewTimer.Initialize(TimeSpan.FromSeconds(1), () => UpdatePreview());
 			_previewTimer.Start();
+
+            ShowTicker = true;
+            ShowSidebar = true; 
 		}
 
 		private void UpdatePreview()

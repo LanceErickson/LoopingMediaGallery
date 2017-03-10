@@ -48,13 +48,9 @@ namespace LoopingMediaGallery.Controllers
 									IMediaProvider mediaProvider,
 									IIntervalTimer mediaTimer)
 		{
-			if (mediaServer == null) throw new ArgumentNullException(nameof(mediaServer));
-			if (mediaProvider == null) throw new ArgumentNullException(nameof(mediaProvider));
-			if (mediaTimer == null) throw new ArgumentNullException(nameof(mediaTimer));
-			
-			_mediaServer = mediaServer;
-			_mediaProvider = mediaProvider;
-			_mediaTimer = mediaTimer;
+            _mediaServer = mediaServer ?? throw new ArgumentNullException(nameof(mediaServer));
+			_mediaProvider = mediaProvider ?? throw new ArgumentNullException(nameof(mediaProvider));
+			_mediaTimer = mediaTimer ?? throw new ArgumentNullException(nameof(mediaTimer));
 
 			_mediaProvider.MediaCollectionPopulated += (s, o) =>
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MediaCollection)));

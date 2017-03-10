@@ -27,9 +27,7 @@ namespace LoopingMediaGallery.Controllers
 
 		public TickerController(ITickerTextProvider tickerTextProvider)
 		{
-			if (tickerTextProvider == null) throw new ArgumentNullException(nameof(tickerTextProvider));
-
-			_tickerTextProvider = tickerTextProvider;
+            _tickerTextProvider = tickerTextProvider ?? throw new ArgumentNullException(nameof(tickerTextProvider));
 
 			_tickerTextProvider.TextCollectionChanged 
 				+= (s, o) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TextCollection)));

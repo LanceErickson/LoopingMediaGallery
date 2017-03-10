@@ -12,9 +12,7 @@ namespace LoopingMediaGallery.Objects
 
 		public MediaServer(IMediaProvider mediaProvider)
 		{
-			if (mediaProvider == null) throw new ArgumentNullException(nameof(mediaProvider));
-
-			_mediaProvider = mediaProvider;
+            _mediaProvider = mediaProvider ?? throw new ArgumentNullException(nameof(mediaProvider));
 
 			if (_mediaProvider.MediaObjectCollection.Any())
 			{

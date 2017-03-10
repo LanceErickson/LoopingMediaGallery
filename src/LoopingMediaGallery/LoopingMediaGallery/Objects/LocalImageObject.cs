@@ -10,11 +10,10 @@ namespace LoopingMediaGallery.Objects
 
 		public LocalImageObject(ISettingsProvider settingsProvider, string source)
 		{
-			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
-			if (string.IsNullOrEmpty(source)) throw new ArgumentNullException(nameof(source));
+            if (string.IsNullOrEmpty(source)) throw new ArgumentNullException(nameof(source));
 			if (!File.Exists(source)) throw new ArgumentException(nameof(source));
 
-			_settingsProvider = settingsProvider;
+			_settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
 
 			Source = new Uri(source);
  		}

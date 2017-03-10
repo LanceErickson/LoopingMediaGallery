@@ -19,8 +19,16 @@ namespace LoopingMediaGallery.Controls
 		}
 		public static readonly DependencyProperty ItemsSourceProperty =
 			DependencyProperty.Register("ItemsSource", typeof(IEnumerable<string>), typeof(TickerTextControl), new PropertyMetadata(Enumerable.Empty<string>()));
-		
-		public bool Run
+
+        public Visibility TextVisibility
+        {
+            get { return (Visibility)GetValue(TextVisibilityProperty); }
+            set { SetValue(TextVisibilityProperty, value); }
+        }
+        public static readonly DependencyProperty TextVisibilityProperty =
+            DependencyProperty.Register("TextVisibility", typeof(Visibility), typeof(TickerTextControl), new PropertyMetadata(Visibility.Hidden));
+
+        public bool Run
 		{
 			get { return (bool)GetValue(RunProperty); }
 			set { SetValue(RunProperty, value); }
@@ -28,10 +36,10 @@ namespace LoopingMediaGallery.Controls
 		public static readonly DependencyProperty RunProperty =
 			DependencyProperty.Register("Run", typeof(bool), typeof(TickerTextControl), new PropertyMetadata(false, (s,o) => (s as TickerTextControl)?.RunChanged()));
 
-		private void RunChanged()
-		{
+        private void RunChanged()
+            => TextVisibility = Run ? Visibility.Visible : Visibility.Collapsed;
 
-		}
+		
 
 		//private void Animate()
 		//{

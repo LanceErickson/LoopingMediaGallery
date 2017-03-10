@@ -14,13 +14,9 @@ namespace LoopingMediaGallery.Objects
 	
 		public MediaProvider(ISettingsProvider settingsProvider, IIntervalTimer intervalTimer, ILogger logger)
 		{
-			if (settingsProvider == null) throw new ArgumentNullException(nameof(settingsProvider));
-			if (intervalTimer == null) throw new ArgumentNullException(nameof(intervalTimer));
-			if (logger == null) throw new ArgumentNullException(nameof(logger));
-
-			_settingsProvider = settingsProvider;
-			_intervalTimer = intervalTimer;
-			_logger = logger;
+            _settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
+			_intervalTimer = intervalTimer ?? throw new ArgumentNullException(nameof(intervalTimer));
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 			_settingsProvider.SettingsChanged += (s, o) =>
 			{
