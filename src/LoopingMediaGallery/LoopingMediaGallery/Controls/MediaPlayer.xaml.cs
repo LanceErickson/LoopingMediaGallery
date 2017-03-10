@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LoopingMediaGallery.Controls
 {
@@ -121,9 +123,12 @@ namespace LoopingMediaGallery.Controls
 
 		private static void SourceChanged(DependencyObject s, DependencyPropertyChangedEventArgs o)
 			=>	(s as MediaPlayer)?.Update();
-		
-		private void Update()
+
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+		private async void Update()
 		{
+            await _semaphore.WaitAsync();
+
 			if (Source == null)
 			{
 				ToggleElementVisibility(_currentElement, false);
@@ -131,27 +136,28 @@ namespace LoopingMediaGallery.Controls
 			}
 
 			if (Source.Type == MediaType.Image)
-				SetupImage(Source);
+				await SetupImage(Source);
 			else
 				SetupVideo(Source);
+            
+            if (!Blank)
+                SwitchElementsVisibility(_currentElement, _queuedElement);
 
-			StartPlaying();
-		}
+            if (Source.Type == MediaType.Video)
+                StartPlaying();
+
+            _currentElement = _queuedElement;
+            _queuedElement = null;
+
+            _semaphore.Release();
+        }
 
 		private void StartPlaying()
 		{
-			(_currentElement as MediaElement)?.Stop();
-			
-			if (!Blank)
-				SwitchElementsVisibility(_currentElement, _queuedElement);
+			(_currentElement as MediaElement)?.Stop();	
 
 			if (Play)
-			{
-				(_queuedElement as MediaElement)?.Play();
-			}
-
-			_currentElement = _queuedElement;
-			_queuedElement = null;
+				(_queuedElement as MediaElement)?.Play();			
 		}
 
 		private void SetupVideo(IMediaObject media)
@@ -164,20 +170,26 @@ namespace LoopingMediaGallery.Controls
 			(_queuedElement as MediaElement).Source = Source.Source;
 		}
 			
-		private void SetupImage(IMediaObject media)
+		private Task SetupImage(IMediaObject media)
 		{
 			if (_currentElement == imageOne)
 				_queuedElement = imageTwo;
 			else
 				_queuedElement = imageOne;
 
-			var newSource = new BitmapImage();
-			newSource.BeginInit();
-			newSource.UriSource = media.Source;
-			newSource.CacheOption = BitmapCacheOption.OnLoad;
-			newSource.EndInit();
-			newSource.Freeze();
-			(_queuedElement as Image).Source = newSource;
+            return Task.Run(() =>
+            {
+                var newSource = new BitmapImage();
+                newSource.BeginInit();
+                newSource.UriSource = media.Source;
+                newSource.CacheOption = BitmapCacheOption.OnLoad;
+                newSource.EndInit();
+                newSource.Freeze();
+                return newSource;
+            }).ContinueWith((task) =>
+            {
+                (_queuedElement as Image).Source = task.Result as BitmapImage;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void SwitchElementsVisibility(UIElement currentElement, UIElement queuedElement)

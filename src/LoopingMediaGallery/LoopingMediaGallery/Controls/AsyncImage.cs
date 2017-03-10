@@ -30,7 +30,7 @@ namespace LoopingMediaGallery.Controls
 			DependencyProperty.Register("UriSource", typeof(Uri), typeof(AsyncImage), new PropertyMetadata(null, (s,o) => SourceUriChanged(s,o)));
 
 		private static void SourceUriChanged(DependencyObject s, DependencyPropertyChangedEventArgs o)
-			=> (s as AsyncImage).UpdateSource();
+			=> (s as AsyncImage)?.UpdateSource();
 
 		public ImageSource Source
 		{

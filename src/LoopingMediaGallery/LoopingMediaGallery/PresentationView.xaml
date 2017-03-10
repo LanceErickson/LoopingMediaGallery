@@ -23,14 +23,16 @@
             <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:MediaPlayer Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="3" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-        <controls:TickerTextControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" ItemsSource="{Binding TextCollection, UpdateSourceTrigger=PropertyChanged}" />
+        <controls:MediaPlayer Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" Grid.ColumnSpan="4" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+        <controls:TickerTextControl Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" ItemsSource="{Binding TextCollection, UpdateSourceTrigger=PropertyChanged}" Run="{Binding Run, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </Window>

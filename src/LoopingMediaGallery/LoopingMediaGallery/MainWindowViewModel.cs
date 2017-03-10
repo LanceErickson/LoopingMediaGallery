@@ -28,12 +28,23 @@ namespace LoopingMediaGallery
 
 		public IEnumerable<string> TextCollection => _tickerController.TextCollection;
 
+		public bool Run
+		{
+			get { return _tickerController.Run; }
+			set
+			{
+				_tickerController.Run = value;
+				SendPropertyChanged(nameof(Run));
+			}
+		}
+
 		public bool Play
 		{
 			get { return _mediaController.Play; }
 			set
 			{
 				_mediaController.Play = value;
+				Run = value;
 				SendPropertyChanged(nameof(Play));
 			}
 		}
@@ -131,7 +142,6 @@ namespace LoopingMediaGallery
 
 			_previewTimer.Initialize(TimeSpan.FromSeconds(1), () => UpdatePreview());
 			_previewTimer.Start();
-			_tickerController.Run = true;
 		}
 
 		private void UpdatePreview()
