@@ -94,29 +94,28 @@ namespace LoopingMediaGallery
 			}
 		}
 
+        private bool _showTicker = true;
         public bool ShowTicker
         {
-            get { return MediaPlayerRowSpan == 1; }
+            get { return _showTicker; }
             set
             {
-                MediaPlayerRowSpan = value ? 1 : 2;
-                SendPropertyChanged(nameof(MediaPlayerRowSpan));
+                _showTicker = value;
+                SendPropertyChanged(nameof(ShowTicker));
             }
         }
 
+        private bool _showSidebar = true;
         public bool ShowSidebar
         {
-            get { return MediaPlayerColumnSpan == 1; }
+            get { return _showSidebar; }
             set
             {
-                MediaPlayerColumnSpan = value ? 1 : 2;
-                SendPropertyChanged(nameof(MediaPlayerColumnSpan));
+                _showSidebar = value;
+                SendPropertyChanged(nameof(ShowSidebar));
             }
         }
 
-        public int MediaPlayerRowSpan { get; private set; }
-        public int MediaPlayerColumnSpan { get; private set; }
-        
         public SettingsWindowView SettingsView { get; }
 
 		public MainWindowViewModel(
@@ -182,15 +181,9 @@ namespace LoopingMediaGallery
 		public void ItemSelected(System.Windows.Controls.ListBox sender) => sender.ScrollIntoView(sender.SelectedItem);
 
 		public void PresentHandler() => _presentViewHandler.PresentationView(_presentationView);
-
 		internal void AddPresentationView(PresentationView presentationView) => _presentationView = presentationView;
+		internal void ClosePresentationView() => _presentationView?.Close();
 		
-		internal void ClosePresentationView()
-		{
-			if (_presentationView != null)
-				_presentationView.Close();
-		}
-
 		public void SettingsHandler()
 		{
 			var settingsWindow = new SettingsWindowView(new SettingsWindowViewModel(_settingsProvider, _settingsSaver));

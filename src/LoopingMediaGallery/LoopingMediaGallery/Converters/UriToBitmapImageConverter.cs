@@ -1,17 +1,13 @@
 ﻿using LoopingMediaGallery.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
 namespace LoopingMediaGallery.Converters
 {
-	public class UriToBitmapImageConverter : IMultiValueConverter
+    public class UriToBitmapImageConverter : IMultiValueConverter
 	{
 		public static UriToBitmapImageConverter Instance => _instance;
 		private static UriToBitmapImageConverter _instance = new UriToBitmapImageConverter();

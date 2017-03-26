@@ -26,7 +26,7 @@
             <RowDefinition Height="9*"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-        <controls:MediaPlayer Grid.Row="0" Grid.RowSpan="{Binding MediaPlayerRowSpan, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.ColumnSpan="{Binding MediaPlayerColumnSpan, UpdateSourceTrigger=PropertyChanged}" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-        <controls:TickerTextControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TextCollection, UpdateSourceTrigger=PropertyChanged}" Run="{Binding Run, UpdateSourceTrigger=PropertyChanged}"/>
+        <controls:MediaPlayer Grid.Row="0" Grid.RowSpan="{Binding ShowTicker, Converter={qc:QuickConverter '$P ? 1 : 2'}, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.ColumnSpan="{Binding ShowSidebar, Converter={qc:QuickConverter '$P ? 1 : 2'}, UpdateSourceTrigger=PropertyChanged}" Source="{Binding CurrentMedia, UpdateSourceTrigger=PropertyChanged}" Play="{Binding Play, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Mute="{Binding Mute, UpdateSourceTrigger=PropertyChanged}" Blank="{Binding Blank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" UseFade="{Binding UseFade, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+        <controls:TickerTextControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TextCollection, UpdateSourceTrigger=PropertyChanged}" Run="{Binding Run, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ShowTicker, Converter={qc:QuickConverter '$P ? Visibility.Visible : Visibility.Hidden'}, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </Window>

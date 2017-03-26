@@ -32,7 +32,7 @@
                                 </Style.Triggers>
                             </Style>
                         </Viewbox.Resources>
-                        <ItemsControl Padding="0,0,0,1" Background="Black" ScrollViewer.CanContentScroll="False" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Recycling" Visibility="{Binding TextVisibility, UpdateSourceTrigger=PropertyChanged}">
+                        <ItemsControl Padding="0,0,0,1" Background="Black" ScrollViewer.CanContentScroll="False" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Recycling" Visibility="{Binding TextVisibility, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}">
                             <ItemsControl.RenderTransform>
                                 <TranslateTransform X="{qc:MultiBinding '!$P0 ? $P1 : 0', P0={Binding Run, RelativeSource={RelativeSource TemplatedParent}}, P1={Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}, UpdateSourceTrigger=PropertyChanged}" />
                             </ItemsControl.RenderTransform>
