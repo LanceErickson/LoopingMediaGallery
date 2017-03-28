@@ -1,46 +1,77 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:LoopingMediaGallery.Controls"
-                    xmlns:qc="http://QuickConverter.CodePlex.com/">
+                    xmlns:qc="http://QuickConverter.CodePlex.com/"
+                    xmlns:spy="clr-namespace:LoopingMediaGallery">
     <Style TargetType="{x:Type local:TickerTextControl}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Viewbox VerticalAlignment="Stretch" ScrollViewer.CanContentScroll="false" StretchDirection="UpOnly" Stretch="UniformToFill">
-                        <Viewbox.Resources>
-                            <!--<Storyboard x:Key="SlideIn">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
-                                           Storyboard.Target="{Binding TemplatedParent}"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.5" Value="-.5"/>
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>-->
-                            <Style TargetType="ItemsControl">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Run, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-462" SpeedRatio=".05" RepeatBehavior="Forever" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.EnterActions>
-                                        <!--<DataTrigger.ExitActions>
-                                            <BeginStoryboard Storyboard="{StaticResource SlideOut}"/>
-                                        </DataTrigger.ExitActions>-->
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Viewbox.Resources>
-                        <ItemsControl Padding="0,0,0,1" Background="Black" ScrollViewer.CanContentScroll="False" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Recycling" Visibility="{Binding TextVisibility, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}">
-                            <ItemsControl.RenderTransform>
-                                <TranslateTransform X="{qc:MultiBinding '!$P0 ? $P1 : 0', P0={Binding Run, RelativeSource={RelativeSource TemplatedParent}}, P1={Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}, UpdateSourceTrigger=PropertyChanged}" />
-                            </ItemsControl.RenderTransform>
+                    <Viewbox VerticalAlignment="Stretch" 
+                             ScrollViewer.CanContentScroll="false"
+                             StretchDirection="UpOnly"
+                             Stretch="UniformToFill">
+                        <ItemsControl x:Name="itemsControl"
+                                      Padding="0,0,0,1" 
+                                      Background="Black"
+                                      ScrollViewer.CanContentScroll="False"
+                                      ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}"
+                                      VirtualizingPanel.IsVirtualizing="True" 
+                                      VirtualizingPanel.ScrollUnit="Pixel"
+                                      VirtualizingPanel.VirtualizationMode="Recycling"
+                                      Visibility="{Binding TextVisibility, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}"
+                                      Width="{qc:MultiBinding '$P0 + $P1', P0={Binding ActualWidth, ElementName=bd, UpdateSourceTrigger=PropertyChanged}, P1={Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}, UpdateSourceTrigger=PropertyChanged}">
+
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel IsItemsHost="True"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
+                            <ItemsControl.RenderTransform>
+                                <TranslateTransform X="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={qc:QuickConverter '-$P'}, UpdateSourceTrigger=PropertyChanged}" />
+                            </ItemsControl.RenderTransform>
+                            <ItemsControl.Resources>
+                                <spy:DataContextSpy x:Key="spy" DataContext="{Binding }"/>
+                                <spy:DataContextSpy x:Key="templatespy" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </ItemsControl.Resources>
+                            <ItemsControl.Template>
+                                <ControlTemplate>
+                                    <Border x:Name="bd" >
+                                        <Border.RenderTransform>
+                                            <TranslateTransform X="{qc:MultiBinding '$P0 + $P1', 
+                                                                            P0={Binding DataContext.ActualWidth, 
+                                                                            Source={StaticResource templatespy}, 
+                                                                            UpdateSourceTrigger=PropertyChanged}, 
+                                                                            P1={Binding ActualWidth,
+                                                                            RelativeSource={RelativeSource AncestorType=Border},
+                                                                            UpdateSourceTrigger=PropertyChanged}, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Border.RenderTransform>
+                                        <Border.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding DataContext.Run, Source={StaticResource templatespy}}" Value="True">
+                                                        <DataTrigger.EnterActions>
+                                                            <BeginStoryboard x:Name="marquee">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation
+                                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                                                     To="0" 
+                                                                     SpeedRatio=".02" 
+                                                                     RepeatBehavior="Forever" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </DataTrigger.EnterActions>
+                                                        <DataTrigger.ExitActions>
+                                                            <StopStoryboard BeginStoryboardName="marquee"/>
+                                                        </DataTrigger.ExitActions>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </ItemsControl.Template>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <DataTemplate.Resources>
