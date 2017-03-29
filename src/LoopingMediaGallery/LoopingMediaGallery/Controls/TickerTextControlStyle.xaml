@@ -19,9 +19,7 @@
                                       VirtualizingPanel.IsVirtualizing="True" 
                                       VirtualizingPanel.ScrollUnit="Pixel"
                                       VirtualizingPanel.VirtualizationMode="Recycling"
-                                      Visibility="{Binding TextVisibility, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}"
-                                      Width="{qc:MultiBinding '$P0 + $P1', P0={Binding ActualWidth, ElementName=bd, UpdateSourceTrigger=PropertyChanged}, P1={Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}, UpdateSourceTrigger=PropertyChanged}">
-
+                                      Visibility="{Binding TextVisibility, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel IsItemsHost="True"/>
