@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopingMediaGallery", "LoopingMediaGallery\LoopingMediaGallery.csproj", "{D68ACD16-F202-40F1-AB0C-025A3FF29CCC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoopingMediaGallery", "LoopingMediaGallery\LoopingMediaGallery.csproj", "{D68ACD16-F202-40F1-AB0C-025A3FF29CCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopingMediaGallery.FileScanner", "LoopingMediaGallery.FileScanner\LoopingMediaGallery.FileScanner.csproj", "{B2139AC5-0524-4F6C-BA62-0FAFDEC58AF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{D68ACD16-F202-40F1-AB0C-025A3FF29CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D68ACD16-F202-40F1-AB0C-025A3FF29CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D68ACD16-F202-40F1-AB0C-025A3FF29CCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2139AC5-0524-4F6C-BA62-0FAFDEC58AF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2139AC5-0524-4F6C-BA62-0FAFDEC58AF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2139AC5-0524-4F6C-BA62-0FAFDEC58AF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2139AC5-0524-4F6C-BA62-0FAFDEC58AF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {614F106A-F8BF-4926-980A-F780089EBB6C}
 	EndGlobalSection
 EndGlobal

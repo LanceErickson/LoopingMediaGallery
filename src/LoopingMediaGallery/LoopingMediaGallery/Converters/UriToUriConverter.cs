@@ -1,9 +1,7 @@
 ﻿using LoopingMediaGallery.Interfaces;
 using System;
 using System.Globalization;
-using System.Reflection;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 
 namespace LoopingMediaGallery.Converters
 {
