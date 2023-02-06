@@ -1,17 +1,5 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using System.Windows.Forms;
 
 namespace LoopingMediaGallery
 {
@@ -32,24 +20,14 @@ namespace LoopingMediaGallery
 
 		private void btnOpen_Click(object sender, RoutedEventArgs e)
 		{
-			var dlg = new CommonOpenFileDialog();
-			dlg.Title = "Select a path to monitor";
-			dlg.IsFolderPicker = true;
-
-			dlg.AddToMostRecentlyUsedList = false;
-			dlg.AllowNonFileSystemItems = false;
-			dlg.EnsureFileExists = true;
-			dlg.EnsurePathExists = true;
-			dlg.EnsureReadOnly = false;
-			dlg.EnsureValidNames = true;
-			dlg.Multiselect = false;
-			dlg.ShowPlacesList = true;
-
-			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
+			using(var folderDialog = new FolderBrowserDialog()) 
 			{
-				var folder = dlg.FileName;
+				DialogResult result = folderDialog.ShowDialog();
 
-				((MainWindowViewModel)DataContext).FolderPath = folder;
+				if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(folderDialog.SelectedPath))
+				{
+					((MainWindowViewModel)DataContext).FolderPath = folderDialog.SelectedPath;
+				}
 			}
 			this.Focus();
 		}
